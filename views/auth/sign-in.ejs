@@ -1,0 +1,22 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Sign In</h1>
+
+<form action="/auth/sign-in" method="POST">
+  <!-- Username -->
+  <label for="username">Username</label><br>
+  <input type="text" name="username" id="username" required><br><br>
+
+  <!-- Password -->
+  <label for="password">Password</label><br>
+  <input type="password" name="password" id="password" required><br><br>
+
+  <!-- Error message -->
+  <% if (error) { %>
+    <div>
+      <%= error %>
+    </div>
+  <% } %>
+
+  <button type="submit">Sign In</button>
+</form>

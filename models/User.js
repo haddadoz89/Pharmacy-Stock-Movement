@@ -15,10 +15,12 @@ const userSchema = new mongoose.Schema({
     ],
     required: true
   },
-  healthCenterId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "HealthCenter",
-    required: true
+  healthCenter: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "HealthCenter",
+  required: function () {
+    return this.position !== "Head of Pharmacy";
+    }
   }
 });
 

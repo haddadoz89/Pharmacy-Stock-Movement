@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pharmacy Stock Movement</title>
+</head>
+<body>
+  <%- include('./partials/_navbar') %>
+
+  <h1>Welcome to Pharmacy Stock Movement</h1>
+
+  <% if (user) { %>
+    <p>You are logged in as <strong><%= user.position %></strong> at 
+      <strong><%= user.healthCenterName %></strong>
+    </p>
+  <% } else { %>
+    <p>Please <a href="/auth/sign-in">sign in</a> to manage or view inventory.</p>
+  <% } %>
+</body>
+</html>

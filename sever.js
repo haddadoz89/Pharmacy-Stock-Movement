@@ -45,10 +45,10 @@ app.get("/", async(req, res) => {
 
 // Require Controller
 const authController = require("./controllers/auth");
-const listingController = require("./controllers/listings");
+// const transactionController = require("./controllers/transactions");
 
 app.use("/auth", authController);
-app.use("/listings", isSignedIn, listingController);
+// app.use("/transactions", isSignedIn, transactionController);
 
 
 app.listen(port, () => {

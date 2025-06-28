@@ -1,0 +1,49 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Sign Up</h1>
+
+<form action="/auth/sign-up" method="POST">
+  <!-- Username -->
+  <label for="username">Username</label><br>
+  <input type="text" name="username" id="username" required><br><br>
+
+  <!-- Password -->
+  <label for="password">Password</label><br>
+  <input type="password" name="password" id="password" required><br><br>
+
+  <!-- Confirm Password -->
+  <label for="confirmPassword">Confirm Password</label><br>
+  <input type="password" name="confirmPassword" id="confirmPassword" required><br><br>
+
+  <!-- Position -->
+  <label for="position">Position</label><br>
+  <select name="position" id="position" required>
+    <option value="">Select a position</option>
+    <option value="Head of Pharmacy">Head of Pharmacy</option>
+    <option value="Senior Pharmacy">Senior Pharmacy</option>
+    <option value="Pharmacist Incharge">Pharmacist Incharge</option>
+    <option value="Pharmacist">Pharmacist</option>
+    <option value="Senior Pharmacy Technician">Senior Pharmacy Technician</option>
+    <option value="Pharmacy Technician">Pharmacy Technician</option>
+  </select><br><br>
+
+  <!-- Health Center -->
+  <label for="healthCenter">Health Center</label><br>
+  <select name="healthCenter" id="healthCenter" required>
+    <option value="">Select a health center</option>
+    <% healthCenters.forEach(center => { %>
+      <option value="<%= center._id %>">
+        <%= center.healthCenterName %>
+      </option>
+    <% }) %>
+  </select><br><br>
+
+  <!-- Error message -->
+  <% if (error) { %>
+    <div>
+      <%= error %>
+    </div>
+  <% } %>
+
+  <button type="submit">Sign Up</button>
+</form>
