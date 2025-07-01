@@ -1,0 +1,52 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1><%= medication.itemName %> - Transactions</h1>
+
+<% if (user && user.position === "Head of Pharmacy") { %>
+  <form method="GET" action="/medications/<%= medication._id %>">
+    <label for="healthCenter">Select Health Center:</label>
+    <select name="healthCenter" id="healthCenter" required>
+      <option value="">--Choose--</option>
+      <% allHealthCenters.forEach(center => { %>
+        <option value="<%= center._id %>" 
+          <%= selectedHealthCenter && center._id.toString() === selectedHealthCenter._id.toString() ? 'selected' : '' %>>
+          <%= center.healthCenterName %> (<%= center.region %>)
+        </option>
+      <% }) %>
+    </select>
+    <button type="submit">View Transactions</button>
+  </form>
+  <br>
+<% } %>
+
+<a href="/medications/<%= medication._id %>/transactions/new">Add New Transaction</a>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <tr>
+    <th>Date</th>
+    <th>Qty In</th>
+    <th>Qty Out</th>
+    <th>counter Balance</th>
+    <th>Store Balance</th>
+    <th>Health Center</th>
+    <th>Entered By</th>
+    <th>Actions</th>
+  </tr>
+  <% transactions.forEach(tx => { %>
+    <tr>
+      <td><%= tx.date %></td>
+      <td><%= tx.qtyIn %></td>
+      <td><%= tx.qtyOut %></td>
+      <td><%= tx.counterStock %></td>
+      <td><%= tx.storeBalance %></td>
+      <td><%= tx.healthCenter?.healthCenterName %></td>
+      <td><%= tx.enteredBy?.username %></td>
+      <td>
+        <a href="/transactions/<%= tx._id %>/edit">Edit</a>
+        <form method="POST" action="/transactions/<%= tx._id %>?_method=DELETE" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+</table>

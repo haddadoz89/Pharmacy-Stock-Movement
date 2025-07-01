@@ -1,55 +1,59 @@
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
 const express = require("express");
-const app = express();
-
-// Middlewares
 const mongoose = require("mongoose");
+const session = require("express-session");
 const methodOverride = require("method-override");
 const morgan = require("morgan");
-const session = require("express-session");
-const passUserToView = require('./middleware/pass-user-to-view');
-const isSignedIn = require('./middleware/is-signed-in');
 
+const passUserToView = require("./middleware/pass-user-to-view");
+const isSignedIn = require("./middleware/is-signed-in");
 
-// Set the port from environment variable or default to 3000
-const port = process.env.PORT ? process.env.PORT : "3000";
+const authController = require("./controllers/auth");
+const medicationsController = require("./controllers/medications");
+const transactionsController = require("./controllers/transactions");
 
-mongoose.connect(process.env.MONGODB_URI);
+const app = express();
+const port = process.env.PORT || 3000;
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 mongoose.connection.on("connected", () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
 
-// Middleware to parse URL-encoded data from forms
-app.use(express.urlencoded({ extended: false }));
-// Middleware for using HTTP verbs such as PUT or DELETE
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-// Morgan for logging HTTP requests
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
-// Session Configurations
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: true
   })
 );
+
 app.use(passUserToView);
 
-// GET
-app.get("/", async(req, res) => {
-  res.render("index.ejs");
-});
-
-// Require Controller
-const authController = require("./controllers/auth");
-// const transactionController = require("./controllers/transactions");
+app.get("/", (req, res) => res.render("index.ejs"));
 
 app.use("/auth", authController);
-// app.use("/transactions", isSignedIn, transactionController);
 
+app.get('/medications', isSignedIn, medicationsController.index);
+app.get('/medications/new', isSignedIn, medicationsController.newForm);
+app.post('/medications', isSignedIn, medicationsController.create);
+app.get('/medications/:id', isSignedIn, medicationsController.show);
+
+app.get('/medications/:id/transactions/new', isSignedIn, transactionsController.newForm);
+app.post('/medications/:id/transactions', isSignedIn, transactionsController.create);
+app.get('/transactions/:id/edit', isSignedIn, transactionsController.editForm);
+app.put('/transactions/:id', isSignedIn, transactionsController.update);
+app.delete('/transactions/:id', isSignedIn, transactionsController.remove);
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);

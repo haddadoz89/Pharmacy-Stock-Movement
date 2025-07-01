@@ -1,0 +1,18 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Medication List</h1>
+
+<a href="/medications/new">Add New Medication</a>
+
+<form method="GET" action="/medications">
+  <input type="text" name="search" value="<%= search %>" placeholder="Search...">
+  <button type="submit">Search</button>
+</form>
+
+<ul>
+  <% medications.forEach(item => { %>
+    <li>
+      <a href="/medications/<%= item._id %>"><%= item.itemName %></a>
+    </li>
+  <% }) %>
+</ul>

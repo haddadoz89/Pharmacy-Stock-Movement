@@ -1,0 +1,28 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Add New Transaction</h1>
+
+<form method="POST" action="/medications/<%= medicationId %>/transactions">
+  <label>Date</label><br>
+  <input type="date" name="date" required><br><br>
+
+  <label>Qty In</label><br>
+  <input type="number" name="qtyIn"><br><br>
+
+  <label>Qty Out</label><br>
+  <input type="number" name="qtyOut"><br><br>
+
+  <label>Counter Stock</label><br>
+  <input type="number" name="counterStock"><br><br>
+
+  <label>Order Number</label><br>
+  <input type="text" name="orderNumber"><br><br>
+
+  <label>Expiry Date</label><br>
+  <input type="date" name="expiryDate"><br><br>
+
+  <label>Lot Number</label><br>
+  <input type="text" name="lotNumber"><br><br>
+
+  <button type="submit">Save Transaction</button>
+</form>

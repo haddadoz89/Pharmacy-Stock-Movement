@@ -1,0 +1,13 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Add New Medication</h1>
+
+<form method="POST" action="/medications">
+  <label>Item Name</label><br>
+  <input type="text" name="itemName" required><br><br>
+
+  <label>Code Number</label><br>
+  <input type="text" name="codeNumber" required><br><br>
+
+  <button type="submit">Add Medication</button>
+</form>

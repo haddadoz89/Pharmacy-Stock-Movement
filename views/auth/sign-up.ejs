@@ -1,21 +1,17 @@
-<%- include('../partials/_navbar.ejs') %>
+<%- include('../partials/_navbar') %>
 
 <h1>Sign Up</h1>
 
 <form action="/auth/sign-up" method="POST">
-  <!-- Username -->
   <label for="username">Username</label><br>
   <input type="text" name="username" id="username" required><br><br>
 
-  <!-- Password -->
   <label for="password">Password</label><br>
   <input type="password" name="password" id="password" required><br><br>
 
-  <!-- Confirm Password -->
   <label for="confirmPassword">Confirm Password</label><br>
   <input type="password" name="confirmPassword" id="confirmPassword" required><br><br>
 
-  <!-- Position -->
   <label for="position">Position</label><br>
   <select name="position" id="position" required>
     <option value="">Select a position</option>
@@ -27,7 +23,6 @@
     <option value="Pharmacy Technician">Pharmacy Technician</option>
   </select><br><br>
 
-  <!-- Health Center -->
   <label for="healthCenter">Health Center</label><br>
   <select name="healthCenter" id="healthCenter" required>
     <option value="">Select a health center</option>
@@ -38,9 +33,8 @@
     <% }) %>
   </select><br><br>
 
-  <!-- Error message -->
   <% if (error) { %>
-    <div>
+    <div style="color: red; margin-bottom: 10px;">
       <%= error %>
     </div>
   <% } %>

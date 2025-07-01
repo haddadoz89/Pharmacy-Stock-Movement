@@ -18,9 +18,7 @@ const userSchema = new mongoose.Schema({
   healthCenter: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "HealthCenter",
-  required: function () {
-    return this.position !== "Head of Pharmacy";
-    }
+  required: true
   }
 });
 

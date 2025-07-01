@@ -1,0 +1,28 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Edit Transaction</h1>
+
+<form method="POST" action="/transactions/<%= transaction._id %>?_method=PUT">
+  <label>Date</label><br>
+  <input type="date" name="date" value="<%= transaction.date.split('T')[0] %>" required><br><br>
+
+  <label>Qty In</label><br>
+  <input type="number" name="qtyIn" value="<%= transaction.qtyIn %>"><br><br>
+
+  <label>Qty Out</label><br>
+  <input type="number" name="qtyOut" value="<%= transaction.qtyOut %>"><br><br>
+
+  <label>Counter Stock</label><br>
+  <input type="number" name="counterStock" value="<%= transaction.counterStock %>"><br><br>
+
+  <label>Order Number</label><br>
+  <input type="text" name="orderNumber" value="<%= transaction.orderNumber %>"><br><br>
+
+  <label>Expiry Date</label><br>
+  <input type="date" name="expiryDate" value="<%= transaction.expiry[0]?.expiryDate?.toISOString().split('T')[0] %>"><br><br>
+
+  <label>Lot Number</label><br>
+  <input type="text" name="lotNumber" value="<%= transaction.expiry[0]?.lotNumber %>"><br><br>
+
+  <button type="submit">Update Transaction</button>
+</form>

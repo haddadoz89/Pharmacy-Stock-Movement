@@ -10,7 +10,6 @@ router.get("/sign-up", async (req, res) => {
   res.render("auth/sign-up.ejs", { healthCenters, error });
 });
 
-
 router.post("/sign-up", async (req, res) => {
   const isUserInDatabase = await User.findOne({ username: req.body.username });
   if (isUserInDatabase) {

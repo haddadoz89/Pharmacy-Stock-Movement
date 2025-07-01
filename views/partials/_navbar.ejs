@@ -1,17 +1,20 @@
-<nav>
-  <ul>
+<nav style="background: #f0f0f0; padding: 10px;">
+  <ul style="list-style: none; display: flex; gap: 15px; padding: 0; margin: 0;">
     <li><a href="/">Home</a></li>
 
-    <% if (!user) { %>
+    <% if (user) { %>
+      <li><a href="/medications">Medications</a></li>
+      <li>
+        Logged in as <strong><%= user.username %></strong> 
+        (<%= user.position %>)
+        <% if (user.healthCenter) { %>
+          - <%= user.healthCenter.healthCenterName %>
+        <% } %>
+      </li>
+      <li><a href="/auth/logout">Logout</a></li>
+    <% } else { %>
       <li><a href="/auth/sign-in">Sign In</a></li>
       <li><a href="/auth/sign-up">Sign Up</a></li>
-    <% } else { %>
-      <% if (user.position === "Head of Pharmacy") { %>
-        <li><a href="/admin/regions">Set Regions</a></li>
-      <% } %>
-
-      <li><a href="/transactions">Stock</a></li>
-      <li><a href="/auth/logout">Logout (<%= user.username %>)</a></li>
     <% } %>
   </ul>
 </nav>
