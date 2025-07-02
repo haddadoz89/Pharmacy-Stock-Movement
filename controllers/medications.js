@@ -11,19 +11,31 @@ const index = async (req, res) => {
 
 const show = async (req, res) => {
   const medication = await MedicationCatalog.findById(req.params.id);
-  const allHealthCenters = await HealthCenter.find();
 
+  let allHealthCenters = [];
   let filter = { codeNumber: medication._id };
   let selectedHealthCenter = null;
 
   if (req.session.user.position === "Head of Pharmacy") {
+    allHealthCenters = await HealthCenter.find();
+    if (req.query.healthCenter) {
+      filter.healthCenter = req.query.healthCenter;
+      selectedHealthCenter = await HealthCenter.findById(req.query.healthCenter);
+    }
+  } 
+  else if (req.session.user.position === "Senior Pharmacy") {
+    const userHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
+    allHealthCenters = await HealthCenter.find({ region: userHealthCenter.region });
+
     if (req.query.healthCenter) {
       filter.healthCenter = req.query.healthCenter;
       selectedHealthCenter = await HealthCenter.findById(req.query.healthCenter);
     } else {
-      filter.healthCenter = null;
+      filter.healthCenter = req.session.user.healthCenter._id;
+      selectedHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
     }
-  } else {
+  } 
+  else {
     filter.healthCenter = req.session.user.healthCenter._id;
   }
 
@@ -39,6 +51,7 @@ const show = async (req, res) => {
     user: req.session.user
   });
 };
+
 
 const newForm = (req, res) => {
   res.render("medications/new.ejs", { user: req.session.user });

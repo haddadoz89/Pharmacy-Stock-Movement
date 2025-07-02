@@ -11,14 +11,12 @@ const isSignedIn = require("./middleware/is-signed-in");
 const authController = require("./controllers/auth");
 const medicationsController = require("./controllers/medications");
 const transactionsController = require("./controllers/transactions");
+const expiryController = require('./controllers/expiry');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect(process.env.MONGODB_URI);
 
 mongoose.connection.on("connected", () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
@@ -54,6 +52,9 @@ app.post('/medications/:id/transactions', isSignedIn, transactionsController.cre
 app.get('/transactions/:id/edit', isSignedIn, transactionsController.editForm);
 app.put('/transactions/:id', isSignedIn, transactionsController.update);
 app.delete('/transactions/:id', isSignedIn, transactionsController.remove);
+
+app.get('/expiry-check', isSignedIn, expiryController.form);
+app.post('/expiry-check', isSignedIn, expiryController.search);
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);
