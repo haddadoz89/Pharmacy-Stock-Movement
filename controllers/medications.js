@@ -65,4 +65,22 @@ const create = async (req, res) => {
   res.redirect("/medications");
 };
 
-module.exports = { index, show, newForm, create };
+const editForm = async (req, res) => {
+  const medication = await MedicationCatalog.findById(req.params.id);
+  res.render('medications/edit.ejs', { medication });
+};
+
+const update = async (req, res) => {
+  await MedicationCatalog.findByIdAndUpdate(req.params.id, {
+    itemName: req.body.itemName,
+    codeNumber: req.body.codeNumber
+  });
+  res.redirect('/medications');
+};
+
+const remove = async (req, res) => {
+  await MedicationCatalog.findByIdAndDelete(req.params.id);
+  res.redirect('/medications');
+};
+
+module.exports = { index, show, newForm, create, editForm, update,remove};

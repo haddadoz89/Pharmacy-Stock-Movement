@@ -12,7 +12,16 @@
 <ul>
   <% medications.forEach(item => { %>
     <li>
-      <a href="/medications/<%= item._id %>"><%= item.itemName %></a>
+      <a href="/medications/<%= item._id %>">
+        <%= item.codeNumber %> - <%= item.itemName %>
+      </a>
+
+      <% if (user.position === "Head of Pharmacy") { %>
+        <a href="/medications/<%= item._id %>/edit">Edit</a>
+        <form method="POST" action="/medications/<%= item._id %>?_method=DELETE" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      <% } %>
     </li>
   <% }) %>
 </ul>

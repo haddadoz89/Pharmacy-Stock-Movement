@@ -46,6 +46,9 @@ app.get('/medications', isSignedIn, medicationsController.index);
 app.get('/medications/new', isSignedIn, medicationsController.newForm);
 app.post('/medications', isSignedIn, medicationsController.create);
 app.get('/medications/:id', isSignedIn, medicationsController.show);
+app.get('/medications/:id/edit', isSignedIn, medicationsController.editForm);
+app.put('/medications/:id', isSignedIn, medicationsController.update);
+app.delete('/medications/:id', isSignedIn, medicationsController.remove);
 
 app.get('/medications/:id/transactions/new', isSignedIn, transactionsController.newForm);
 app.post('/medications/:id/transactions', isSignedIn, transactionsController.create);
