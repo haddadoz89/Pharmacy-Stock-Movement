@@ -1,63 +1,53 @@
 require("dotenv").config();
 const express = require("express");
+const app = express();
+
 const mongoose = require("mongoose");
-const session = require("express-session");
 const methodOverride = require("method-override");
 const morgan = require("morgan");
+const session = require("express-session");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+const passUserToView = require('./middleware/pass-user-to-view');
+const isSignedIn = require('./middleware/is-signed-in');
 
-const passUserToView = require("./middleware/pass-user-to-view");
-const isSignedIn = require("./middleware/is-signed-in");
-
-const authController = require("./controllers/auth");
-const medicationsController = require("./controllers/medications");
-const transactionsController = require("./controllers/transactions");
-const expiryController = require('./controllers/expiry');
-
-const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || "3000";
 
 mongoose.connect(process.env.MONGODB_URI);
-
 mongoose.connection.on("connected", () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
 
-app.set("view engine", "ejs");
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
   })
 );
-
 app.use(passUserToView);
 
-app.get("/", (req, res) => res.render("index.ejs"));
+app.get("/", (req, res) => {
+  res.render("index.ejs");
+});
 
-app.use("/auth", authController);
+const authRouter = require("./controllers/auth");
+const medicationsRouter = require("./controllers/medications");
+const transactionsRouter = require("./controllers/transactions");
+const expiryRouter = require("./controllers/expiry");
+const catalogImportRouter = require("./controllers/catalogImport");
+const transactionImportRouter = require("./controllers/transactionImport");
 
-app.get('/medications', isSignedIn, medicationsController.index);
-app.get('/medications/new', isSignedIn, medicationsController.newForm);
-app.post('/medications', isSignedIn, medicationsController.create);
-app.get('/medications/:id', isSignedIn, medicationsController.show);
-app.get('/medications/:id/edit', isSignedIn, medicationsController.editForm);
-app.put('/medications/:id', isSignedIn, medicationsController.update);
-app.delete('/medications/:id', isSignedIn, medicationsController.remove);
-
-app.get('/medications/:id/transactions/new', isSignedIn, transactionsController.newForm);
-app.post('/medications/:id/transactions', isSignedIn, transactionsController.create);
-app.get('/transactions/:id/edit', isSignedIn, transactionsController.editForm);
-app.put('/transactions/:id', isSignedIn, transactionsController.update);
-app.delete('/transactions/:id', isSignedIn, transactionsController.remove);
-
-app.get('/expiry-check', isSignedIn, expiryController.form);
-app.post('/expiry-check', isSignedIn, expiryController.search);
+app.use("/auth", authRouter);
+app.use("/", medicationsRouter);
+app.use("/", transactionsRouter);
+app.use("/", expiryRouter);
+app.use("/", catalogImportRouter);
+app.use("/", transactionImportRouter);
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);

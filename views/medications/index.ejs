@@ -2,13 +2,20 @@
 
 <h1>Medication List</h1>
 
-<a href="/medications/new">Add New Medication</a>
-
 <form method="GET" action="/medications">
   <input type="text" name="search" value="<%= search %>" placeholder="Search...">
   <button type="submit">Search</button>
 </form>
+<h1>Medication List</h1>
 
+<% if (user.position === "Head of Pharmacy") { %>
+  <a href="/medications/new">Add New Medication</a> |
+  <a href="/medications/import">Import Medication Catalog</a>
+<% } %>
+
+<% if (user.position !== "Head of Pharmacy") { %>
+  <a href="/transactions/import">Import Transactions</a>
+<% } %>
 <ul>
   <% medications.forEach(item => { %>
     <li>
@@ -17,7 +24,7 @@
       </a>
 
       <% if (user.position === "Head of Pharmacy") { %>
-        <a href="/medications/<%= item._id %>/edit">Edit</a>
+        <a href="/medications/<%= item._id %>/edit">Edit</a> 
         <form method="POST" action="/medications/<%= item._id %>?_method=DELETE" style="display:inline;">
           <button type="submit">Delete</button>
         </form>

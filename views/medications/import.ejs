@@ -1,0 +1,10 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Import Medication Catalog</h1>
+
+<form method="POST" action="/medications/import" enctype="multipart/form-data">
+  <input type="file" name="file" accept=".xlsx" required>
+  <br>
+  <br>
+  <button type="submit">Upload and Import</button>
+</form>

@@ -1,16 +1,64 @@
+const router = require("express").Router();
 const MedicationCatalog = require("../models/medicationCatalog");
 const MedicationTransaction = require("../models/medicationTransaction");
 const HealthCenter = require("../models/healthCenter");
 
-const index = async (req, res) => {
+router.get("/medications", async (req, res) => {
   const search = req.query.search || "";
   const regex = new RegExp(search, "i");
   const medications = await MedicationCatalog.find({ itemName: { $regex: regex } });
   res.render("medications/index.ejs", { medications, search });
-};
+});
 
-const show = async (req, res) => {
+router.get("/medications/new", (req, res) => {
+  res.render("medications/new.ejs", { user: req.session.user });
+});
+
+router.get("/medications/import", (req, res) => {
+  if (req.session.user.position !== "Head of Pharmacy") {
+    req.session.formError = "Access Denied: Head of Pharmacy Only.";
+    return res.redirect("/medications");
+  }
+  res.render("medications/import.ejs");
+});
+
+router.post("/medications", async (req, res) => {
+  await MedicationCatalog.create({
+    itemName: req.body.itemName,
+    codeNumber: req.body.codeNumber
+  });
+  res.redirect("/medications");
+});
+
+router.get("/medications/:id/edit", async (req, res) => {
   const medication = await MedicationCatalog.findById(req.params.id);
+  res.render("medications/edit.ejs", { medication });
+});
+
+router.put("/medications/:id", async (req, res) => {
+  await MedicationCatalog.findByIdAndUpdate(req.params.id, {
+    itemName: req.body.itemName,
+    codeNumber: req.body.codeNumber
+  });
+  res.redirect('/medications');
+});
+
+router.delete("/medications/:id", async (req, res) => {
+  await MedicationCatalog.findByIdAndDelete(req.params.id);
+  res.redirect('/medications');
+});
+
+router.get("/medications/:id", async (req, res) => {
+  let medication;
+  try {
+    medication = await MedicationCatalog.findById(req.params.id);
+  } catch (err) {
+    return res.redirect("/medications");
+  }
+
+  if (!medication) {
+    return res.redirect("/medications");
+  }
 
   let allHealthCenters = [];
   let filter = { codeNumber: medication._id };
@@ -50,37 +98,6 @@ const show = async (req, res) => {
     selectedHealthCenter,
     user: req.session.user
   });
-};
+});
 
-
-const newForm = (req, res) => {
-  res.render("medications/new.ejs", { user: req.session.user });
-};
-
-const create = async (req, res) => {
-  await MedicationCatalog.create({
-    itemName: req.body.itemName,
-    codeNumber: req.body.codeNumber
-  });
-  res.redirect("/medications");
-};
-
-const editForm = async (req, res) => {
-  const medication = await MedicationCatalog.findById(req.params.id);
-  res.render('medications/edit.ejs', { medication });
-};
-
-const update = async (req, res) => {
-  await MedicationCatalog.findByIdAndUpdate(req.params.id, {
-    itemName: req.body.itemName,
-    codeNumber: req.body.codeNumber
-  });
-  res.redirect('/medications');
-};
-
-const remove = async (req, res) => {
-  await MedicationCatalog.findByIdAndDelete(req.params.id);
-  res.redirect('/medications');
-};
-
-module.exports = { index, show, newForm, create, editForm, update,remove};
+module.exports = router;

@@ -1,20 +1,21 @@
+const router = require("express").Router();
 const MedicationTransaction = require("../models/medicationTransaction");
 
-const newForm = (req, res) => {
+router.get("/medications/:id/transactions/new", (req, res) => {
   res.render("transactions/new.ejs", {
     medicationId: req.params.id,
     user: req.session.user
   });
-};
+});
 
-const create = async (req, res) => {
+router.post("/medications/:id/transactions", async (req, res) => {
   const medicationId = req.params.id;
   const userHealthCenterId = req.session.user.healthCenter;
 
   const previousTransaction = await MedicationTransaction.findOne({
     codeNumber: medicationId,
     healthCenter: userHealthCenterId
-  }).sort({ date: -1 });
+  }).sort({ date: -1 , _id: -1});
 
   let previousBalance = 0;
   if (previousTransaction) {
@@ -42,14 +43,14 @@ const create = async (req, res) => {
   });
 
   res.redirect(`/medications/${medicationId}`);
-};
+});
 
-const editForm = async (req, res) => {
+router.get("/transactions/:id/edit", async (req, res) => {
   const transaction = await MedicationTransaction.findById(req.params.id);
   res.render("transactions/edit.ejs", { transaction, user: req.session.user });
-};
+});
 
-const update = async (req, res) => {
+router.put("/transactions/:id", async (req, res) => {
   await MedicationTransaction.findByIdAndUpdate(req.params.id, {
     date: req.body.date,
     qtyIn: req.body.qtyIn,
@@ -65,14 +66,14 @@ const update = async (req, res) => {
 
   const transaction = await MedicationTransaction.findById(req.params.id);
   res.redirect(`/medications/${transaction.codeNumber}`);
-};
+});
 
-const remove = async (req, res) => {
+router.delete("/transactions/:id", async (req, res) => {
   const transaction = await MedicationTransaction.findById(req.params.id);
   const medicationId = transaction.codeNumber;
 
   await MedicationTransaction.findByIdAndDelete(req.params.id);
   res.redirect(`/medications/${medicationId}`);
-};
+});
 
-module.exports = { newForm, create, editForm, update, remove };
+module.exports = router;

@@ -1,0 +1,8 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<h1>Import Transactions</h1>
+
+<form method="POST" action="/transactions/import" enctype="multipart/form-data">
+  <input type="file" name="file" accept=".xlsx" required>
+  <button type="submit">Upload and Import</button>
+</form>

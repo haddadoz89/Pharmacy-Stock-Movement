@@ -1,12 +1,12 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1><%= medication.itemName %> - Transactions</h1>
+<h1><%= medication.codeNumber %> - <%= medication.itemName %> - Transactions</h1>
 
 <% if (user && (user.position === "Head of Pharmacy" || user.position === "Senior Pharmacy")) { %>
   <form method="GET" action="/medications/<%= medication._id %>">
     <label for="healthCenter">Select Health Center:</label>
     <select name="healthCenter" id="healthCenter" required>
-      <option value="">--Choose--</option>
+      <option value=""> --Choose-- </option>
       <% allHealthCenters
           .filter(center => 
             user.position === "Head of Pharmacy" || 
@@ -31,8 +31,11 @@
     <th>Date</th>
     <th>Qty In</th>
     <th>Qty Out</th>
+    <th>Counter Stock</th>
     <th>Store Balance</th>
     <th>Expiry Dates</th>
+    <th>Lot Numbers</th>
+    <th>Order Number</th>
     <th>Health Center</th>
     <th>Entered By</th>
     <th>Actions</th>
@@ -42,22 +45,32 @@
       <td><%= tx.date %></td>
       <td><%= tx.qtyIn %></td>
       <td><%= tx.qtyOut %></td>
+      <td><%= tx.counterStock %></td>
       <td><%= tx.storeBalance %></td>
       <td>
         <% tx.expiry.forEach(e => { %>
           <div>
-            <%= e.expiryDate ? e.expiryDate.toISOString().split('T')[0] : '' %> 
-            (<%= e.lotNumber %>)
+            <% if (e.expiryDate instanceof Date) { %>
+              <%= e.expiryDate.toISOString().split('T')[0].split('-').reverse().join('/') %>
+            <% } else { %>
+              <%= e.expiryDate %>
+            <% } %>
           </div>
         <% }) %>
       </td>
+      <td>
+        <% tx.expiry.forEach(e => { %>
+          <div><%= e.lotNumber %></div>
+        <% }) %>
+      </td>
+      <td><%= tx.orderNumber %></td>
       <td><%= tx.healthCenter?.healthCenterName %></td>
       <td><%= tx.enteredBy?.username %></td>
       <td>
         <% if (user.position !== "Head of Pharmacy") { %>
           <a href="/transactions/<%= tx._id %>/edit">Edit</a>
           <form method="POST" action="/transactions/<%= tx._id %>?_method=DELETE" style="display:inline;">
-            <button type="submit">Delete</button>
+            <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
           </form>
         <% } else { %>
           View Only
