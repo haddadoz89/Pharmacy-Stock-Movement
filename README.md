@@ -91,8 +91,56 @@ Pharmacy Stock Movement is designed for the Ministry of Health to:
     ```
 
 ---
+## Project Structure
+```
+Pharmacy-Stock-Movement/
+│
+├── server.js
+├── package.json
+├── .env
+├── /controllers
+│   ├── auth.js
+│   ├── medications.js
+│   ├── transactions.js
+│   ├── expiry.js
+│   ├── catalogImport.js
+│   └── transactionImport.js
+│
+├── /models
+│   ├── user.js
+│   ├── healthCenter.js
+│   ├── medicationCatalog.js
+│   └── medicationTransaction.js
+│
+├── /middleware
+│   ├── is-signed-in.js
+│   └── pass-user-to-view.js
+│
+├── /views
+│   ├── index.ejs
+│   ├── /auth
+│   │   ├── sign-in.ejs
+│   │   └── sign-up.ejs
+│   ├── /medications
+│   │   ├── index.ejs
+│   │   ├── show.ejs
+│   │   ├── new.ejs
+│   │   ├── edit.ejs
+│   │   └── import.ejs
+│   ├── /transactions
+│   │   ├── new.ejs
+│   │   ├── edit.ejs
+│   │   └── import.ejs
+│   ├── /expiry
+│   │   └── form.ejs
+│   └── /partials
+│       └── _navbar.ejs
+│
+└── /uploads
 
-## 📦 Data Models
+```
+---
+## Data Models
 
 ### User
 - username
@@ -122,7 +170,7 @@ Pharmacy Stock Movement is designed for the Ministry of Health to:
 
 ---
 
-## 🗺️ Routes Overview
+## Routes Overview
 
 - `/auth` – Sign In / Sign Up / Logout
 - `/medications` – List / Add / Edit / Delete / Import
@@ -131,19 +179,19 @@ Pharmacy Stock Movement is designed for the Ministry of Health to:
 
 ---
 
-## 📑 ERD
+## ERD
 
 [ERD Link]( https://lucid.app/lucidchart/4264f55d-f7fe-4d72-8e2a-f24cb57dc84a/edit?viewport_loc=-453%2C-96%2C3980%2C1710%2C0_0&invitationId=inv_316b028f-b953-496d-9cad-dbfa87296ac0)
 
 ---
 
-## ✅ Future Improvements
+## Future Improvements
 
 - Export reports to PDF
 - Add CSS for better styling
 
 ---
 
-## 👥 Authors
+## Authors
 
 - Mohammed Hassan Jassim
