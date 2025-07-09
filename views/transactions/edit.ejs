@@ -1,28 +1,46 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1>Edit Transaction</h1>
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Edit Transaction</h2>
 
-<form method="POST" action="/transactions/<%= transaction._id %>?_method=PUT">
-  <label>Date</label><br>
-  <input type="date" name="date" value="<%= transaction.date.split('T')[0] %>" required><br><br>
+  <div class="card p-4">
+    <form method="POST" action="/transactions/<%= transaction._id %>?_method=PUT">
+      <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" class="form-control" id="date" name="date" value="<%= transaction.date.split('T')[0] %>" required>
+      </div>
 
-  <label>Qty In</label><br>
-  <input type="number" name="qtyIn" value="<%= transaction.qtyIn %>"><br><br>
+      <div class="mb-3">
+        <label for="qtyIn" class="form-label">Qty In</label>
+        <input type="number" class="form-control" id="qtyIn" name="qtyIn" value="<%= transaction.qtyIn %>">
+      </div>
 
-  <label>Qty Out</label><br>
-  <input type="number" name="qtyOut" value="<%= transaction.qtyOut %>"><br><br>
+      <div class="mb-3">
+        <label for="qtyOut" class="form-label">Qty Out</label>
+        <input type="number" class="form-control" id="qtyOut" name="qtyOut" value="<%= transaction.qtyOut %>">
+      </div>
 
-  <label>Counter Stock</label><br>
-  <input type="number" name="counterStock" value="<%= transaction.counterStock %>"><br><br>
+      <div class="mb-3">
+        <label for="counterStock" class="form-label">Counter Stock</label>
+        <input type="number" class="form-control" id="counterStock" name="counterStock" value="<%= transaction.counterStock %>">
+      </div>
 
-  <label>Order Number</label><br>
-  <input type="text" name="orderNumber" value="<%= transaction.orderNumber %>"><br><br>
+      <div class="mb-3">
+        <label for="orderNumber" class="form-label">Order Number</label>
+        <input type="text" class="form-control" id="orderNumber" name="orderNumber" value="<%= transaction.orderNumber %>">
+      </div>
 
-  <label>Expiry Date</label><br>
-  <input type="date" name="expiryDate" value="<%= transaction.expiry[0]?.expiryDate?.toISOString().split('T')[0] %>"><br><br>
+      <div class="mb-3">
+        <label for="expiryDate" class="form-label">Expiry Date</label>
+        <input type="date" class="form-control" id="expiryDate" name="expiryDate" value="<%= transaction.expiry[0]?.expiryDate?.toISOString().split('T')[0] %>">
+      </div>
 
-  <label>Lot Number</label><br>
-  <input type="text" name="lotNumber" value="<%= transaction.expiry[0]?.lotNumber %>"><br><br>
+      <div class="mb-3">
+        <label for="lotNumber" class="form-label">Lot Number</label>
+        <input type="text" class="form-control" id="lotNumber" name="lotNumber" value="<%= transaction.expiry[0]?.lotNumber %>">
+      </div>
 
-  <button type="submit">Update Transaction</button>
-</form>
+      <button type="submit" class="btn btn-primary w-100">Update Transaction</button>
+    </form>
+  </div>
+</div>

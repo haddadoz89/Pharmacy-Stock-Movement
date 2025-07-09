@@ -1,19 +1,25 @@
 <%- include('../partials/_navbar') %>
 
-<h1>Sign In</h1>
-
-<form action="/auth/sign-in" method="POST">
-  <label for="username">Username</label><br>
-  <input type="text" name="username" id="username" required><br><br>
-
-  <label for="password">Password</label><br>
-  <input type="password" name="password" id="password" required><br><br>
+<div class="container mt-5" style="max-width: 400px;">
+  <h2 class="mb-4 text-center">Sign In</h2>
 
   <% if (error) { %>
-    <div style="color: red; margin-bottom: 10px;">
+    <div class="alert alert-danger" role="alert">
       <%= error %>
     </div>
   <% } %>
 
-  <button type="submit">Sign In</button>
-</form>
+  <form action="/auth/sign-in" method="POST">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" name="username" id="username" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" name="password" id="password" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Sign In</button>
+  </form>
+</div>

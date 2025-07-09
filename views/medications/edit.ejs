@@ -1,17 +1,25 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1>Edit Medication</h1>
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Edit Medication</h2>
 
-<% if (user.position === "Head of Pharmacy") { %>
-  <form method="POST" action="/medications/<%= medication._id %>?_method=PUT">
-    <label>Item Name</label><br>
-    <input type="text" name="itemName" value="<%= medication.itemName %>" required><br><br>
+  <% if (user.position === "Head of Pharmacy") { %>
+    <form method="POST" action="/medications/<%= medication._id %>?_method=PUT">
+      <div class="mb-3">
+        <label for="itemName" class="form-label">Item Name</label>
+        <input type="text" class="form-control" id="itemName" name="itemName" value="<%= medication.itemName %>" required>
+      </div>
 
-    <label>Code Number</label><br>
-    <input type="text" name="codeNumber" value="<%= medication.codeNumber %>" required><br><br>
+      <div class="mb-3">
+        <label for="codeNumber" class="form-label">Code Number</label>
+        <input type="text" class="form-control" id="codeNumber" name="codeNumber" value="<%= medication.codeNumber %>" required>
+      </div>
 
-    <button type="submit">Update Medication</button>
-  </form>
-<% } else { %>
-  <p style="color:red;">Access Denied: Only Head of Pharmacy can edit medications.</p>
-<% } %>
+      <button type="submit" class="btn btn-primary w-100">Update Medication</button>
+    </form>
+  <% } else { %>
+    <div class="alert alert-danger text-center" role="alert">
+      Access Denied: Only Head of Pharmacy can edit medications.
+    </div>
+  <% } %>
+</div>

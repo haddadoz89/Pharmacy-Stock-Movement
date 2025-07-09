@@ -1,34 +1,55 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1>Medication List</h1>
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Medication List</h2>
 
-<form method="GET" action="/medications">
-  <input type="text" name="search" value="<%= search %>" placeholder="Search...">
-  <button type="submit">Search</button>
-</form>
-<h1>Medication List</h1>
+  <!-- Search Form -->
+  <form class="d-flex mb-4" method="GET" action="/medications">
+    <input 
+      type="text" 
+      class="form-control me-2" 
+      name="search" 
+      value="<%= search %>" 
+      placeholder="Search...">
+    <button class="btn btn-primary" type="submit">Search</button>
+  </form>
 
-<% if (user.position === "Head of Pharmacy") { %>
-  <a href="/medications/new">Add New Medication</a> |
-  <a href="/medications/import">Import Medication Catalog</a>
-<% } %>
+  <!-- Action Links -->
+  <div class="mb-4">
+    <% if (user.position === "Head of Pharmacy") { %>
+      <a class="btn btn-success me-2" href="/medications/new">Add New Medication</a>
+      <a class="btn btn-outline-primary" href="/medications/import">Import Medication Catalog</a>
+    <% } %>
 
-<% if (user.position !== "Head of Pharmacy") { %>
-  <a href="/transactions/import">Import Transactions</a>
-<% } %>
-<ul>
-  <% medications.forEach(item => { %>
-    <li>
-      <a href="/medications/<%= item._id %>">
-        <%= item.codeNumber %> - <%= item.itemName %>
-      </a>
+    <% if (user.position !== "Head of Pharmacy") { %>
+      <a class="btn btn-outline-secondary" href="/transactions/import">Import Transactions</a>
+    <% } %>
+  </div>
 
-      <% if (user.position === "Head of Pharmacy") { %>
-        <a href="/medications/<%= item._id %>/edit">Edit</a> 
-        <form method="POST" action="/medications/<%= item._id %>?_method=DELETE" style="display:inline;">
-          <button type="submit">Delete</button>
-        </form>
-      <% } %>
-    </li>
-  <% }) %>
-</ul>
+  <!-- Medication List -->
+  <% if (medications.length > 0) { %>
+    <div class="list-group">
+      <% medications.forEach(item => { %>
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <a class="text-decoration-none" href="/medications/<%= item._id %>">
+              <strong><%= item.codeNumber %></strong> - <%= item.itemName %>
+            </a>
+          </div>
+          <% if (user.position === "Head of Pharmacy") { %>
+            <div class="d-flex gap-2">
+              <a class="btn btn-sm btn-warning" href="/medications/<%= item._id %>/edit">Edit</a>
+              <form method="POST" action="/medications/<%= item._id %>?_method=DELETE" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="alert alert-info">
+      No medications found.
+    </div>
+  <% } %>
+</div>

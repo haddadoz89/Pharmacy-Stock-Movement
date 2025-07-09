@@ -1,81 +1,104 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1><%= medication.codeNumber %> - <%= medication.itemName %> - Transactions</h1>
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">
+    <%= medication.codeNumber %> - <%= medication.itemName %> - Transactions
+  </h2>
 
-<% if (user && (user.position === "Head of Pharmacy" || user.position === "Senior Pharmacy")) { %>
-  <form method="GET" action="/medications/<%= medication._id %>">
-    <label for="healthCenter">Select Health Center:</label>
-    <select name="healthCenter" id="healthCenter" required>
-      <option value=""> --Choose-- </option>
-      <% allHealthCenters
-          .filter(center => 
-            user.position === "Head of Pharmacy" || 
-            (user.position === "Senior Pharmacy" && center.region === user.healthCenter.region)
-          )
-          .forEach(center => { %>
-        <option value="<%= center._id %>" 
-          <%= selectedHealthCenter && center._id.toString() === selectedHealthCenter._id.toString() ? 'selected' : '' %>>
-          <%= center.healthCenterName %> (<%= center.region %>)
-        </option>
-      <% }) %>
-    </select>
-    <button type="submit">View Transactions</button>
-  </form>
-  <br>
-<% } %>
+  <% if (user && (user.position === "Head of Pharmacy" || user.position === "Senior Pharmacy")) { %>
+    <div class="card p-3 mb-4">
+      <form class="row g-3" method="GET" action="/medications/<%= medication._id %>">
+        <div class="col-12">
+          <label for="healthCenter" class="form-label">Select Health Center</label>
+          <select class="form-select" name="healthCenter" id="healthCenter" required>
+            <option value=""> --Choose-- </option>
+            <% allHealthCenters
+                .filter(center => 
+                  user.position === "Head of Pharmacy" || 
+                  (user.position === "Senior Pharmacy" && center.region === user.healthCenter.region)
+                )
+                .forEach(center => { %>
+              <option value="<%= center._id %>" 
+                <%= selectedHealthCenter && center._id.toString() === selectedHealthCenter._id.toString() ? 'selected' : '' %>>
+                <%= center.healthCenterName %> (<%= center.region %>)
+              </option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary w-100">View Transactions</button>
+        </div>
+      </form>
+    </div>
+  <% } %>
 
-<a href="/medications/<%= medication._id %>/transactions/new">Add New Transaction</a>
+  <div class="mb-3">
+    <a class="btn btn-success" href="/medications/<%= medication._id %>/transactions/new">Add New Transaction</a>
+  </div>
 
-<table border="1" cellpadding="5" cellspacing="0">
-  <tr>
-    <th>Date</th>
-    <th>Qty In</th>
-    <th>Qty Out</th>
-    <th>Counter Stock</th>
-    <th>Store Balance</th>
-    <th>Expiry Dates</th>
-    <th>Lot Numbers</th>
-    <th>Order Number</th>
-    <th>Health Center</th>
-    <th>Entered By</th>
-    <th>Actions</th>
-  </tr>
-  <% transactions.forEach(tx => { %>
-    <tr>
-      <td><%= tx.date %></td>
-      <td><%= tx.qtyIn %></td>
-      <td><%= tx.qtyOut %></td>
-      <td><%= tx.counterStock %></td>
-      <td><%= tx.storeBalance %></td>
-      <td>
-        <% tx.expiry.forEach(e => { %>
-          <div>
-            <% if (e.expiryDate instanceof Date) { %>
-              <%= e.expiryDate.toISOString().split('T')[0].split('-').reverse().join('/') %>
-            <% } else { %>
-              <%= e.expiryDate %>
-            <% } %>
-          </div>
-        <% }) %>
-      </td>
-      <td>
-        <% tx.expiry.forEach(e => { %>
-          <div><%= e.lotNumber %></div>
-        <% }) %>
-      </td>
-      <td><%= tx.orderNumber %></td>
-      <td><%= tx.healthCenter?.healthCenterName %></td>
-      <td><%= tx.enteredBy?.username %></td>
-      <td>
-        <% if (user.position !== "Head of Pharmacy") { %>
-          <a href="/transactions/<%= tx._id %>/edit">Edit</a>
-          <form method="POST" action="/transactions/<%= tx._id %>?_method=DELETE" style="display:inline;">
-            <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
-          </form>
-        <% } else { %>
-          View Only
-        <% } %>
-      </td>
-    </tr>
-  <% }) %>
-</table>
+  <% if (transactions.length > 0) { %>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Qty In</th>
+            <th>Qty Out</th>
+            <th>Counter Stock</th>
+            <th>Store Balance</th>
+            <th>Expiry Dates</th>
+            <th>Lot Numbers</th>
+            <th>Order Number</th>
+            <th>Health Center</th>
+            <th>Entered By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% transactions.forEach(tx => { %>
+            <tr>
+              <td><%= tx.date %></td>
+              <td><%= tx.qtyIn %></td>
+              <td><%= tx.qtyOut %></td>
+              <td><%= tx.counterStock %></td>
+              <td><%= tx.storeBalance %></td>
+              <td>
+                <% tx.expiry.forEach(e => { %>
+                  <div>
+                    <% if (e.expiryDate instanceof Date) { %>
+                      <%= e.expiryDate.toISOString().split('T')[0].split('-').reverse().join('/') %>
+                    <% } else { %>
+                      <%= e.expiryDate %>
+                    <% } %>
+                  </div>
+                <% }) %>
+              </td>
+              <td>
+                <% tx.expiry.forEach(e => { %>
+                  <div><%= e.lotNumber %></div>
+                <% }) %>
+              </td>
+              <td><%= tx.orderNumber %></td>
+              <td><%= tx.healthCenter?.healthCenterName %></td>
+              <td><%= tx.enteredBy?.username %></td>
+              <td>
+                <% if (user.position !== "Head of Pharmacy") { %>
+                  <a class="btn btn-sm btn-warning" href="/transactions/<%= tx._id %>/edit">Edit</a>
+                  <form method="POST" action="/transactions/<%= tx._id %>?_method=DELETE" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                  </form>
+                <% } else { %>
+                  <span class="text-muted">View Only</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="alert alert-info mt-4">
+      No transactions found for this medication.
+    </div>
+  <% } %>
+</div>

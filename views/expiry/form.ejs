@@ -1,52 +1,69 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1>Expiry Date Check</h1>
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Expiry Date Check</h2>
 
-<form method="POST" action="/expiry-check">
-  <label for="startDate">Start Date:</label>
-  <input type="date" name="startDate" value="<%= startDate %>" required>
-  <br>
-  <br>
-  <label for="endDate">End Date:</label>
-  <input type="date" name="endDate" value="<%= endDate %>" required>
-  <br>
-  <br>
+  <div class="card p-4 mb-4">
+    <form method="POST" action="/expiry-check">
+      <div class="mb-3">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" class="form-control" name="startDate" id="startDate" value="<%= startDate %>" required>
+      </div>
+      <div class="mb-3">
+        <label for="endDate" class="form-label">End Date</label>
+        <input type="date" class="form-control" name="endDate" id="endDate" value="<%= endDate %>" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Search</button>
+    </form>
+  </div>
 
-  <button type="submit">Search</button>
-</form>
+  <% if (startDate && endDate) { %>
+    <div class="mb-4">
+      <form method="POST" action="/expiry-check/export">
+        <input type="hidden" name="startDate" value="<%= startDate %>">
+        <input type="hidden" name="endDate" value="<%= endDate %>">
+        <button type="submit" class="btn btn-success w-100">Export Results to Excel</button>
+      </form>
+    </div>
+  <% } %>
 
-<form method="POST" action="/expiry-check/export">
-  <input type="hidden" name="startDate" value="<%= startDate %>">
-  <input type="hidden" name="endDate" value="<%= endDate %>">
-  <button type="submit">Export Results to Excel</button>
-</form>
+  <% if (user) { %>
+    <div class="alert alert-info">
+      <% if (user.position === "Head of Pharmacy") { %>
+        Access: Viewing expiry dates for <strong>all health centers</strong>.
+      <% } else if (user.position === "Senior Pharmacy") { %>
+        Access: Viewing expiry dates for <strong>health centers in your region</strong>.
+      <% } else { %>
+        Access: Viewing expiry dates for <strong>your health center only</strong>.
+      <% } %>
+    </div>
+  <% } %>
 
-<% if (user && user.position === "Head of Pharmacy") { %>
-  <h3>Access: Viewing expiry dates for all health centers.</h3>
-<% } else if (user && user.position === "Senior Pharmacy") { %>
-  <h3>Access: Viewing expiry dates for health centers in your region.</h3>
-<% } else { %>
-  <h3>Access: Viewing expiry dates for your health center only.</h3>
-<% } %>
-
-<% if (results && results.length > 0) { %>
-  <h2>Results:</h2>
-  <table border="1" cellpadding="5" cellspacing="1">
-    <tr>
-      <th>Medication Name</th>
-      <th>Expiry Date</th>
-      <th>Lot Number</th>
-      <th>Health Center</th>
-    </tr>
-    <% results.forEach(tx => { %>
-      <% tx.expiry.forEach(ex => { %>
-        <tr>
-          <td><%= tx.codeNumber.itemName %></td>
-          <td><%= ex.expiryDate ? ex.expiryDate.toISOString().split('T')[0] : '' %></td>
-          <td><%= ex.lotNumber %></td>
-          <td><%= tx.healthCenter ? tx.healthCenter.healthCenterName : '' %></td>
-        </tr>
-      <% }) %>
-    <% }) %>
-  </table>
-<% } %>
+  <% if (results && results.length > 0) { %>
+    <h3 class="mt-4 mb-3">Results</h3>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>Medication Name</th>
+            <th>Expiry Date</th>
+            <th>Lot Number</th>
+            <th>Health Center</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% results.forEach(tx => { %>
+            <% tx.expiry.forEach(ex => { %>
+              <tr>
+                <td><%= tx.codeNumber.itemName %></td>
+                <td><%= ex.expiryDate ? ex.expiryDate.toISOString().split('T')[0] : '' %></td>
+                <td><%= ex.lotNumber %></td>
+                <td><%= tx.healthCenter ? tx.healthCenter.healthCenterName : '' %></td>
+              </tr>
+            <% }) %>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>

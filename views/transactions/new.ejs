@@ -1,28 +1,46 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1>Add New Transaction</h1>
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Add New Transaction</h2>
 
-<form method="POST" action="/medications/<%= medicationId %>/transactions">
-  <label>Date</label><br>
-  <input type="date" name="date" required><br><br>
+  <div class="card p-4">
+    <form method="POST" action="/medications/<%= medicationId %>/transactions">
+      <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" class="form-control" id="date" name="date" required>
+      </div>
 
-  <label>Qty In</label><br>
-  <input type="number" name="qtyIn"><br><br>
+      <div class="mb-3">
+        <label for="qtyIn" class="form-label">Qty In</label>
+        <input type="number" class="form-control" id="qtyIn" name="qtyIn">
+      </div>
 
-  <label>Qty Out</label><br>
-  <input type="number" name="qtyOut"><br><br>
+      <div class="mb-3">
+        <label for="qtyOut" class="form-label">Qty Out</label>
+        <input type="number" class="form-control" id="qtyOut" name="qtyOut">
+      </div>
 
-  <label>Counter Stock</label><br>
-  <input type="number" name="counterStock"><br><br>
+      <div class="mb-3">
+        <label for="counterStock" class="form-label">Counter Stock</label>
+        <input type="number" class="form-control" id="counterStock" name="counterStock">
+      </div>
 
-  <label>Order Number</label><br>
-  <input type="text" name="orderNumber"><br><br>
+      <div class="mb-3">
+        <label for="orderNumber" class="form-label">Order Number</label>
+        <input type="text" class="form-control" id="orderNumber" name="orderNumber">
+      </div>
 
-  <label>Expiry Date</label><br>
-  <input type="date" name="expiryDate"><br><br>
+      <div class="mb-3">
+        <label for="expiryDate" class="form-label">Expiry Date</label>
+        <input type="date" class="form-control" id="expiryDate" name="expiryDate">
+      </div>
 
-  <label>Lot Number</label><br>
-  <input type="text" name="lotNumber"><br><br>
+      <div class="mb-3">
+        <label for="lotNumber" class="form-label">Lot Number</label>
+        <input type="text" class="form-control" id="lotNumber" name="lotNumber">
+      </div>
 
-  <button type="submit">Save Transaction</button>
-</form>
+      <button type="submit" class="btn btn-primary w-100">Save Transaction</button>
+    </form>
+  </div>
+</div>

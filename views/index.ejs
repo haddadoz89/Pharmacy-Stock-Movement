@@ -1,13 +1,23 @@
 <%- include('./partials/_navbar') %>
 
-<h1>Welcome to Pharmacy Stock Movement</h1>
+<div class="container mt-5">
+  <div class="text-center">
+    <h1 class="mb-4">Welcome to Pharmacy Stock Movement</h1>
 
-<% if (user) { %>
-  <p>You are logged in as <strong><%= user.position %></strong>
-    <% if (user.healthCenter) { %>
-      at <strong><%= user.healthCenter.healthCenterName %></strong>
+    <% if (user) { %>
+      <p class="lead">
+        You are logged in as <strong><%= user.position %></strong>
+        <% if (user.healthCenter) { %>
+          at <strong><%= user.healthCenter.healthCenterName %></strong>
+        <% } %>
+      </p>
+      <a href="/medications" class="btn btn-primary mt-3">Go to Medications</a>
+
+    <% } else { %>
+      <p class="lead">
+        Please <a href="/auth/sign-in" class="btn btn-outline-primary">Sign In</a> 
+        or <a href="/auth/sign-up" class="btn btn-primary">Sign Up</a> to manage inventory.
+      </p>
     <% } %>
-  </p>
-<% } else { %>
-  <p>Please <a href="/auth/sign-in">sign in</a> to manage inventory.</p>
-<% } %>
+  </div>
+</div>
