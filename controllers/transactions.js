@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const MedicationTransaction = require("../models/medicationTransaction");
+const MedicationTransaction = require("../models/MedicationTransaction");
 
 router.get("/medications/:id/transactions/new", (req, res) => {
   res.render("transactions/new.ejs", {

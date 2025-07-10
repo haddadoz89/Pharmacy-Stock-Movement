@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/User");
-const HealthCenter = require("../models/healthCenter");
+const HealthCenter = require("../models/HealthCenter");
 const bcrypt = require("bcrypt");
 
 router.get("/sign-up", async (req, res) => {

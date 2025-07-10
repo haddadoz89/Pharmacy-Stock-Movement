@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const multer = require("multer");
 const XLSX = require("xlsx");
-const MedicationTransaction = require("../models/medicationTransaction");
-const MedicationCatalog = require("../models/medicationCatalog");
+const MedicationTransaction = require("../models/MedicationTransaction");
+const MedicationCatalog = require("../models/MedicationCatalog");
 
 const upload = multer({ dest: "uploads/" });
 

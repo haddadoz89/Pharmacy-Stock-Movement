@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const MedicationTransaction = require("../models/medicationTransaction");
-const HealthCenter = require("../models/healthCenter");
+const MedicationTransaction = require("../models/MedicationTransaction");
+const HealthCenter = require("../models/HealthCenter");
 const XLSX = require("xlsx");
 
 

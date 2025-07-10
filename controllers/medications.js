@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const MedicationCatalog = require("../models/medicationCatalog");
-const MedicationTransaction = require("../models/medicationTransaction");
-const HealthCenter = require("../models/healthCenter");
+const MedicationCatalog = require("../models/MedicationCatalog");
+const MedicationTransaction = require("../models/MedicationTransaction");
+const HealthCenter = require("../models/HealthCenter");
 
 router.get("/medications", async (req, res) => {
   const search = req.query.search || "";
