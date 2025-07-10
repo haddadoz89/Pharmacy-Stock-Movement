@@ -6,7 +6,11 @@ const HealthCenter = require("../models/healthCenter");
 router.get("/medications", async (req, res) => {
   const search = req.query.search || "";
   const regex = new RegExp(search, "i");
-  const medications = await MedicationCatalog.find({ itemName: { $regex: regex } });
+  const medications = await MedicationCatalog.find({
+    $or:[
+    { itemName: { $regex: regex }},
+    { codeNumber:{$regex:regex}} 
+  ]});
   res.render("medications/index.ejs", { medications, search });
 });
 
