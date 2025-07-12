@@ -1,53 +1,86 @@
 # 💊 Pharmacy Stock Movement
 
-A Node.js / Express / MongoDB app to manage pharmacy inventory and stock transactions with role-based access.
+A Node.js / Express / MongoDB app to manage pharmacy inventory and stock transactions with role-based access, import/export functionality, and reporting.
 
 ---
 
-##  Overview
+##  📖 Overview
 
 Pharmacy Stock Movement is designed for the Ministry of Health to:
 
-- Track medication catalog entries
-- Record stock transactions per health center
-- Keep store balances updated automatically
-- Search for expiry dates
-- Import and export data with Excel
-- Control access by user role
+Track medication catalog entries
+
+Record stock transactions per health center
+
+Automatically maintain store balances
+
+View stock movement history
+
+Search and export expiry dates
+
+Manage users with roles and health center assignments
+
+Generate Excel reports
+
+Import and export data via Excel
+
+Enforce strict role-based access
 
 ---
 
-##  User Stories
+##  👥 User Stories
+- As a user, I want to sign in and out securely.
 
-- As a user, I want to sign in and out to protect my account.
-- As a new user, I want to register with my role and health center.
-- As the Head of Pharmacy, I want to manage all health centers.
-- As the Head of Pharmacy, I want to add, edit, delete, and import medications.
-- As a user (except Head), I want to add, edit, delete, and import transactions for my health center.
-- As the Head of Pharmacy, I want to view all transactions.
-- As a Senior Pharmacy user, I want to see transactions in my region.
-- As other users, I want to see transactions in my health center.
+- As Head of Pharmacy, I want to manage all health centers.
+
+- As Head of Pharmacy, I want to add, edit, delete, and bulk-import medication catalog.
+
+- As Head of Pharmacy, I want to manage users and assign them health centers.
+
+- As Head of Pharmacy, I want to see and filter expiry dates for any health center.
+
+- As Head of Pharmacy, I want to generate Excel expiry and transaction reports for all centers.
+
+- As a Senior Pharmacy user, I want to see and filter data for my entire region.
+
+- As Senior Pharmacy, I want to choose any health center in my region to view transactions.
+
+- As regular pharmacy users, I want to see and manage transactions only for my assigned health center.
+
+- As any user, I want to add, edit, delete, and import stock transactions for my health center.
+
 - As a user, I want store balance to calculate automatically.
-- As a user, I want to search expiry dates between two dates.
-- As a user, I want to export expiry date results to Excel.
+
+- As a user, I want to search expiry dates between two dates and see only available stock.
+
+- As a user, I want to export expiry date search results to Excel.
+
+- As a user, I want to see and edit remarks on transactions.
+
+- As a user, I want the UI to be responsive, with loading indicators for large file imports.
 
 ---
 
-## Features
+## 🎯 Features
 
-- User authentication with roles
-- Medication catalog (add/edit/delete/import)
-- Stock transactions (add/edit/delete/import)
-- Automatic store balance
-- Expiry date search and export to Excel
-- Role-based access:
-  - Head: All health centers
-  - Senior: Region only
-  - Others: Own health center only
+✅ User authentication with roles
+✅ User management (by Head of Pharmacy)
+✅ Medication catalog management (add / edit / delete / import via Excel)
+✅ Stock transaction management (add / edit / delete / import via Excel)
+✅ Expiry date search between two dates
+✅ Filter expiry by health center or region (role-based)
+✅ Export expiry search results to Excel
+✅ Remarks field for transactions
+✅ Reports module to generate Excel transaction reports with filters
+✅ Role-based data visibility:
+    - Head of Pharmacy: All health centers
+    - Senior Pharmacy: Region only
+    - Others: Own health center only
+        ✅ Loading modal while importing large Excel files
 
 ---
 
-## Tech Stack
+## ⚙️ Tech Stack
 
 - **Backend:** Node.js, Express
 - **Database:** MongoDB with Mongoose
@@ -98,12 +131,15 @@ Pharmacy-Stock-Movement/
 ├── server.js
 ├── package.json
 ├── .env
+│
 ├── /controllers
 │   ├── auth.js
 │   ├── medications.js
 │   ├── transactions.js
 │   ├── expiry.js
+│   ├── reports.js
 │   ├── catalogImport.js
+│   ├── users.js
 │   └── transactionImport.js
 │
 ├── /models
@@ -116,27 +152,30 @@ Pharmacy-Stock-Movement/
 │   ├── is-signed-in.js
 │   └── pass-user-to-view.js
 │
-├── /views
-│   ├── index.ejs
-│   ├── /auth
-│   │   ├── sign-in.ejs
-│   │   └── sign-up.ejs
-│   ├── /medications
-│   │   ├── index.ejs
-│   │   ├── show.ejs
-│   │   ├── new.ejs
-│   │   ├── edit.ejs
-│   │   └── import.ejs
-│   ├── /transactions
-│   │   ├── new.ejs
-│   │   ├── edit.ejs
-│   │   └── import.ejs
-│   ├── /expiry
-│   │   └── form.ejs
-│   └── /partials
-│       └── _navbar.ejs
-│
-└── /uploads
+└── /views
+   ├── index.ejs
+   ├── /auth
+   │   └── sign-in.ejs
+   ├── /medications
+   │   ├── index.ejs
+   │   ├── show.ejs
+   │   ├── new.ejs
+   │   ├── edit.ejs
+   │   └── import.ejs
+   ├── /transactions
+   │   ├── new.ejs
+   │   ├── edit.ejs
+   │   └── import.ejs
+   ├── /users
+   │   ├── new.ejs
+   │   ├── edit.ejs
+   │   └── index.ejs
+   ├── /expiry
+   │   └── form.ejs
+   ├── /reports
+   │   └── form.ejs
+   └── /partials
+       └── _navbar.ejs
 
 ```
 ---
@@ -147,6 +186,7 @@ Pharmacy-Stock-Movement/
 - password
 - position (role)
 - healthCenter (ref)
+- active (Boolean)
 
 ### HealthCenter
 - healthCenterName
@@ -165,6 +205,7 @@ Pharmacy-Stock-Movement/
 - storeBalance
 - expiry (array of expiryDate, lotNumber)
 - orderNumber
+- remarks
 - enteredBy (ref)
 - healthCenter (ref)
 
@@ -172,10 +213,12 @@ Pharmacy-Stock-Movement/
 
 ## Routes Overview
 
-- `/auth` – Sign In / Sign Up / Logout
+- `/auth` – Sign In / Logout
 - `/medications` – List / Add / Edit / Delete / Import
 - `/transactions` – Add / Edit / Delete / Import
 - `/expiry-check` – Search / Export
+- `/reports` – View / Export
+- `/users` – Manage Users (Head of Pharmacy only)
 
 ---
 
@@ -188,7 +231,9 @@ Pharmacy-Stock-Movement/
 ## Future Improvements
 
 - Export reports to PDF
-- Add CSS for better styling
+- Add email notifications
+- Audit logs for all changes
+- Add stock adjustment support
 
 ---
 
