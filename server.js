@@ -43,15 +43,18 @@ const expiryRouter = require("./controllers/expiry");
 const catalogImportRouter = require("./controllers/catalogImport");
 const transactionImportRouter = require("./controllers/transactionImport");
 const usersController = require("./controllers/users");
+const reportsController = require("./controllers/reports");
 
 
 app.use("/auth", authRouter);
-app.use("/", medicationsRouter);
-app.use("/", transactionsRouter);
-app.use("/", expiryRouter);
-app.use("/", catalogImportRouter);
-app.use("/", transactionImportRouter);
+app.use("/",isSignedIn, medicationsRouter);
+app.use("/",isSignedIn, transactionsRouter);
+app.use("/",isSignedIn, expiryRouter);
+app.use("/",isSignedIn, catalogImportRouter);
+app.use("/",isSignedIn, transactionImportRouter);
 app.use("/users", isSignedIn, usersController);
+app.use("/reports", isSignedIn, reportsController);
+
 
 
 app.listen(port, () => {

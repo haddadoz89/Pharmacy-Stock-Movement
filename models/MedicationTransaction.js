@@ -6,7 +6,7 @@ const medicationTransactionSchema = new mongoose.Schema({
     ref: "MedicationCatalog",
     required: true
   },
-  date: { type: String, required: true },
+  date: { type: Date, required: true },
   qtyIn: Number,
   qtyOut: Number,
   counterStock: Number,
