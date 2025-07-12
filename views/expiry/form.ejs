@@ -5,6 +5,21 @@
 
   <div class="card p-4 mb-4">
     <form method="POST" action="/expiry-check">
+      
+      <% if (allowedHealthCenters && allowedHealthCenters.length > 1) { %>
+        <div class="mb-3">
+          <label for="healthCenter" class="form-label">Select Health Center</label>
+          <select class="form-select" name="healthCenter" id="healthCenter">
+            <option value="">All Health Centers</option>
+            <% allowedHealthCenters.forEach(center => { %>
+              <option value="<%= center._id %>" <%= center._id.toString() === selectedHealthCenter ? "selected" : "" %>>
+                <%= center.healthCenterName %> (<%= center.region %>)
+              </option>
+            <% }) %>
+          </select>
+        </div>
+      <% } %>
+
       <div class="mb-3">
         <label for="startDate" class="form-label">Start Date</label>
         <input type="date" class="form-control" name="startDate" id="startDate" value="<%= startDate %>" required>
@@ -22,6 +37,9 @@
       <form method="POST" action="/expiry-check/export">
         <input type="hidden" name="startDate" value="<%= startDate %>">
         <input type="hidden" name="endDate" value="<%= endDate %>">
+        <% if (selectedHealthCenter) { %>
+          <input type="hidden" name="healthCenter" value="<%= selectedHealthCenter %>">
+        <% } %>
         <button type="submit" class="btn btn-success w-100">Export Results to Excel</button>
       </form>
     </div>
@@ -30,9 +48,9 @@
   <% if (user) { %>
     <div class="alert alert-info">
       <% if (user.position === "Head of Pharmacy") { %>
-        Access: Viewing expiry dates for <strong>all health centers</strong>.
+        Access: Viewing expiry dates for <strong>all health centers</strong>, with option to filter.
       <% } else if (user.position === "Senior Pharmacy") { %>
-        Access: Viewing expiry dates for <strong>health centers in your region</strong>.
+        Access: Viewing expiry dates for <strong>health centers in your region</strong>, with option to filter.
       <% } else { %>
         Access: Viewing expiry dates for <strong>your health center only</strong>.
       <% } %>

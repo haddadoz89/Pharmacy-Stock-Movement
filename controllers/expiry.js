@@ -3,7 +3,6 @@ const MedicationTransaction = require("../models/MedicationTransaction");
 const HealthCenter = require("../models/HealthCenter");
 const XLSX = require("xlsx");
 
-
 router.get("/expiry-check", (req, res) => {
   res.render('expiry/form.ejs', {
     results: null,
@@ -44,8 +43,14 @@ router.post("/expiry-check", async (req, res) => {
     .populate('codeNumber')
     .populate('healthCenter');
 
+  const filteredResults = results.filter(tx => {
+    const store = tx.storeBalance || 0;
+    const counter = tx.counterStock || 0;
+    return (store + counter) > 0;
+  });
+
   res.render('expiry/form.ejs', {
-    results,
+    results: filteredResults,
     startDate,
     endDate,
     allowedHealthCenters,
@@ -77,6 +82,7 @@ router.post("/expiry-check/export", async (req, res) => {
   if (req.session.user.position !== "Head of Pharmacy") {
     query.healthCenter = { $in: healthCenterFilter };
   }
+  
 
   const results = await MedicationTransaction.find(query)
     .populate('codeNumber')
@@ -85,14 +91,28 @@ router.post("/expiry-check/export", async (req, res) => {
   let exportData = [];
 
   results.forEach(tx => {
-    tx.expiry.forEach(ex => {
-      exportData.push({
-        "Medication Name": tx.codeNumber.itemName,
-        "Expiry Date": ex.expiryDate ? ex.expiryDate.toISOString().split('T')[0] : '',
-        "Lot Number": ex.lotNumber,
-        "Health Center": tx.healthCenter ? tx.healthCenter.healthCenterName : ''
+    const store = tx.storeBalance || 0;
+    const counter = tx.counterStock || 0;
+    const total = store + counter;
+
+    if (total > 0) {
+      tx.expiry.forEach(ex => {
+        exportData.push({
+          "Medication Name": tx.codeNumber.itemName,
+          "Expiry Date": ex.expiryDate ? ex.expiryDate.toISOString().split('T')[0] : '',
+          "Lot Number": ex.lotNumber,
+          "Health Center": tx.healthCenter ? tx.healthCenter.healthCenterName : '',
+          "Store Balance": store,
+          "Counter Stock": counter
+        });
       });
-    });
+    }
+  });
+
+  exportData.sort((a, b) => {
+    if (a["Health Center"] < b["Health Center"]) return -1;
+    if (a["Health Center"] > b["Health Center"]) return 1;
+    return new Date(a["Expiry Date"]) - new Date(b["Expiry Date"]);
   });
 
   const ws = XLSX.utils.json_to_sheet(exportData);

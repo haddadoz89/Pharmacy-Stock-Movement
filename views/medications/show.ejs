@@ -49,6 +49,7 @@
             <th>Expiry Dates</th>
             <th>Lot Numbers</th>
             <th>Order Number</th>
+            <th>Remarks</th>
             <th>Health Center</th>
             <th>Entered By</th>
             <th>Actions</th>
@@ -79,6 +80,7 @@
                 <% }) %>
               </td>
               <td><%= tx.orderNumber %></td>
+              <td><%= tx.remarks %></td>
               <td><%= tx.healthCenter?.healthCenterName %></td>
               <td><%= tx.enteredBy?.username %></td>
               <td>

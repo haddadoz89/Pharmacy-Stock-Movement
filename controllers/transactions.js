@@ -39,7 +39,8 @@ router.post("/medications/:id/transactions", async (req, res) => {
     }],
     orderNumber: req.body.orderNumber,
     enteredBy: req.session.user._id,
-    healthCenter: userHealthCenterId
+    healthCenter: userHealthCenterId,
+    remarks: req.body.remarks
   });
 
   res.redirect(`/medications/${medicationId}`);
@@ -61,7 +62,8 @@ router.put("/transactions/:id", async (req, res) => {
       expiryDate: req.body.expiryDate,
       lotNumber: req.body.lotNumber
     }],
-    orderNumber: req.body.orderNumber
+    orderNumber: req.body.orderNumber,
+    remarks: req.body.remarks
   });
 
   const transaction = await MedicationTransaction.findById(req.params.id);

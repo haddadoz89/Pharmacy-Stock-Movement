@@ -48,7 +48,12 @@ router.put("/medications/:id", async (req, res) => {
 });
 
 router.delete("/medications/:id", async (req, res) => {
-  await MedicationCatalog.findByIdAndDelete(req.params.id);
+  const medId = req.params.id;
+
+  await MedicationTransaction.deleteMany({ codeNumber: medId });
+
+  await MedicationCatalog.findByIdAndDelete(medId);
+
   res.redirect('/medications');
 });
 

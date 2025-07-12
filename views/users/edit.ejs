@@ -1,0 +1,37 @@
+<%- include('../partials/_navbar') %>
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Edit User</h2>
+  <div class="card p-4">
+    <form method="POST" action="/users/<%= user._id %>?_method=PUT">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" value="<%= user.username %>" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">New Password (leave blank to keep existing)</label>
+        <input type="password" class="form-control" name="password">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Role</label>
+        <select class="form-select" name="position" required>
+          <option value="Senior Pharmacy" <%= user.position === "Senior Pharmacy" ? "selected" : "" %>>Senior Pharmacy</option>
+          <option value="Pharmacist Incharge" <%= user.position === "Pharmacist Incharge" ? "selected" : "" %>>Pharmacist Incharge</option>
+          <option value="Pharmacist" <%= user.position === "Pharmacist" ? "selected" : "" %>>Pharmacist</option>
+          <option value="Senior Pharmacy Technician" <%= user.position === "Senior Pharmacy Technician" ? "selected" : "" %>>Senior Pharmacy Technician</option>
+          <option value="Pharmacy Technician" <%= user.position === "Pharmacy Technician" ? "selected" : "" %>>Pharmacy Technician</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Health Center</label>
+        <select class="form-select" name="healthCenter" required>
+          <% healthCenters.forEach(center => { %>
+            <option value="<%= center._id %>" <%= user.healthCenter && user.healthCenter.toString() === center._id.toString() ? "selected" : "" %>>
+              <%= center.healthCenterName %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Update User</button>
+    </form>
+  </div>
+</div>

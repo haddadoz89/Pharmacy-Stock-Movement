@@ -23,7 +23,8 @@ const medicationTransactionSchema = new mongoose.Schema({
   healthCenter: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "HealthCenter"
-  }
+  },
+  remarks: String
 });
 
 module.exports = mongoose.model("MedicationTransaction", medicationTransactionSchema);

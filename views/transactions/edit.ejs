@@ -40,6 +40,11 @@
         <input type="text" class="form-control" id="lotNumber" name="lotNumber" value="<%= transaction.expiry[0]?.lotNumber %>">
       </div>
 
+      <div class="mb-3">
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea class="form-control" id="remarks" name="remarks"><%= transaction.remarks %></textarea>
+      </div>
+      
       <button type="submit" class="btn btn-primary w-100">Update Transaction</button>
     </form>
   </div>

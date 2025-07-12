@@ -1,0 +1,58 @@
+<%- include('../partials/_navbar') %>
+<div class="container mt-5">
+  <h2 class="mb-4">User Management</h2>
+  <a class="btn btn-success mb-3" href="/users/new">Add New User</a>
+  <form method="GET" action="/users" class="row mb-4">
+  <div class="col-md-4">
+    <input type="text" name="search" value="<%= search %>" class="form-control" placeholder="Search by username">
+  </div>
+  <div class="col-md-3">
+    <select name="role" class="form-select">
+      <option value="">All Roles</option>
+      <option value="Senior Pharmacy" <%= role === "Senior Pharmacy" ? "selected" : "" %>>Senior Pharmacy</option>
+      <option value="Pharmacist Incharge" <%= role === "Pharmacist Incharge" ? "selected" : "" %>>Pharmacist Incharge</option>
+      <option value="Pharmacist" <%= role === "Pharmacist" ? "selected" : "" %>>Pharmacist</option>
+      <option value="Senior Pharmacy Technician" <%= role === "Senior Pharmacy Technician" ? "selected" : "" %>>Senior Pharmacy Technician</option>
+      <option value="Pharmacy Technician" <%= role === "Pharmacy Technician" ? "selected" : "" %>>Pharmacy Technician</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary w-100" type="submit">Search</button>
+  </div>
+</form>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Health Center</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(user => { %>
+        <tr>
+          <td><%= user.username %></td>
+          <td><%= user.position %></td>
+          <td><%= user.healthCenter ? user.healthCenter.healthCenterName : 'N/A' %></td>
+          <td>
+            <%= user.active ? "Active" : "Inactive" %>
+            <form method="POST" action="/users/<%= user._id %>/toggle?_method=PUT" style="display:inline;">
+              <button class="btn btn-sm <%= user.active ? 'btn-warning' : 'btn-success' %>">
+                <%= user.active ? 'Deactivate' : 'Activate' %>
+              </button>
+            </form>
+          </td>
+          <td>
+            <a class="btn btn-warning btn-sm" href="/users/<%= user._id %>/edit">Edit</a>
+            <form method="POST" action="/users/<%= user._id %>?_method=DELETE" style="display:inline;">
+              <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

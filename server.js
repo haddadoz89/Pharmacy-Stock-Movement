@@ -42,6 +42,8 @@ const transactionsRouter = require("./controllers/transactions");
 const expiryRouter = require("./controllers/expiry");
 const catalogImportRouter = require("./controllers/catalogImport");
 const transactionImportRouter = require("./controllers/transactionImport");
+const usersController = require("./controllers/users");
+
 
 app.use("/auth", authRouter);
 app.use("/", medicationsRouter);
@@ -49,6 +51,8 @@ app.use("/", transactionsRouter);
 app.use("/", expiryRouter);
 app.use("/", catalogImportRouter);
 app.use("/", transactionImportRouter);
+app.use("/users", isSignedIn, usersController);
+
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);

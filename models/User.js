@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema({
   type: mongoose.Schema.Types.ObjectId,
   ref: "HealthCenter",
   required: true
+  },
+  active: {
+  type: Boolean,
+
+  
+  default: true
   }
 });
 

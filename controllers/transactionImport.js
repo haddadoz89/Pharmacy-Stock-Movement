@@ -71,6 +71,7 @@ router.post("/transactions/import", upload.single("file"), async (req, res) => {
         lotNumber: row["Lot Number"]
       }],
       orderNumber: row["Order Number"],
+      remarks: row["Remarks"],
       enteredBy: req.session.user._id,
       healthCenter: req.session.user.healthCenter
     });
