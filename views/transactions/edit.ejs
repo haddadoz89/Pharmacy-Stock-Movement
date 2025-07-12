@@ -5,46 +5,83 @@
 
   <div class="card p-4">
     <form method="POST" action="/transactions/<%= transaction._id %>?_method=PUT">
+      
       <div class="mb-3">
         <label for="date" class="form-label">Date</label>
-        <input type="date" class="form-control" id="date" name="date" value="<%= transaction.date.split('T')[0] %>" required>
+        <input 
+          type="date" 
+          class="form-control" 
+          id="date" 
+          name="date" 
+          value="<%= transaction.date ? transaction.date.split('T')[0] : '' %>" 
+          required>
       </div>
 
       <div class="mb-3">
         <label for="qtyIn" class="form-label">Qty In</label>
-        <input type="number" class="form-control" id="qtyIn" name="qtyIn" value="<%= transaction.qtyIn %>">
+        <input 
+          type="number" 
+          class="form-control" 
+          id="qtyIn" 
+          name="qtyIn" 
+          value="<%= transaction.qtyIn || '' %>">
       </div>
 
       <div class="mb-3">
         <label for="qtyOut" class="form-label">Qty Out</label>
-        <input type="number" class="form-control" id="qtyOut" name="qtyOut" value="<%= transaction.qtyOut %>">
+        <input 
+          type="number" 
+          class="form-control" 
+          id="qtyOut" 
+          name="qtyOut" 
+          value="<%= transaction.qtyOut || '' %>">
       </div>
 
       <div class="mb-3">
         <label for="counterStock" class="form-label">Counter Stock</label>
-        <input type="number" class="form-control" id="counterStock" name="counterStock" value="<%= transaction.counterStock %>">
+        <input 
+          type="number" 
+          class="form-control" 
+          id="counterStock" 
+          name="counterStock" 
+          value="<%= transaction.counterStock || '' %>">
       </div>
 
       <div class="mb-3">
         <label for="orderNumber" class="form-label">Order Number</label>
-        <input type="text" class="form-control" id="orderNumber" name="orderNumber" value="<%= transaction.orderNumber %>">
+        <input 
+          type="text" 
+          class="form-control" 
+          id="orderNumber" 
+          name="orderNumber" 
+          value="<%= transaction.orderNumber || '' %>">
       </div>
 
       <div class="mb-3">
         <label for="expiryDate" class="form-label">Expiry Date</label>
-        <input type="date" class="form-control" id="expiryDate" name="expiryDate" value="<%= transaction.expiry[0]?.expiryDate?.toISOString().split('T')[0] %>">
+        <input 
+          type="date" 
+          class="form-control" 
+          id="expiryDate" 
+          name="expiryDate" 
+          value="<%= transaction.expiry && transaction.expiry[0] && transaction.expiry[0].expiryDate ? transaction.expiry[0].expiryDate.toISOString().split('T')[0] : '' %>">
       </div>
 
       <div class="mb-3">
         <label for="lotNumber" class="form-label">Lot Number</label>
-        <input type="text" class="form-control" id="lotNumber" name="lotNumber" value="<%= transaction.expiry[0]?.lotNumber %>">
+        <input 
+          type="text" 
+          class="form-control" 
+          id="lotNumber" 
+          name="lotNumber" 
+          value="<%= transaction.expiry && transaction.expiry[0] ? transaction.expiry[0].lotNumber : '' %>">
       </div>
 
       <div class="mb-3">
         <label for="remarks" class="form-label">Remarks</label>
-        <textarea class="form-control" id="remarks" name="remarks"><%= transaction.remarks %></textarea>
+        <textarea class="form-control" id="remarks" name="remarks" rows="3"><%= transaction.remarks || '' %></textarea>
       </div>
-      
+
       <button type="submit" class="btn btn-primary w-100">Update Transaction</button>
     </form>
   </div>

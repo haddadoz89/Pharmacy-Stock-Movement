@@ -11,13 +11,8 @@
         <div class="col-12">
           <label for="healthCenter" class="form-label">Select Health Center</label>
           <select class="form-select" name="healthCenter" id="healthCenter" required>
-            <option value=""> --Choose-- </option>
-            <% allHealthCenters
-                .filter(center => 
-                  user.position === "Head of Pharmacy" || 
-                  (user.position === "Senior Pharmacy" && center.region === user.healthCenter.region)
-                )
-                .forEach(center => { %>
+            <option value="">-- Choose --</option>
+            <% allHealthCenters.forEach(center => { %>
               <option value="<%= center._id %>" 
                 <%= selectedHealthCenter && center._id.toString() === selectedHealthCenter._id.toString() ? 'selected' : '' %>>
                 <%= center.healthCenterName %> (<%= center.region %>)
@@ -32,7 +27,7 @@
     </div>
   <% } %>
 
-  <div class="mb-3">
+  <div class="mb-3 text-end">
     <a class="btn btn-success" href="/medications/<%= medication._id %>/transactions/new">Add New Transaction</a>
   </div>
 
@@ -66,11 +61,9 @@
               <td>
                 <% tx.expiry.forEach(e => { %>
                   <div>
-                    <% if (e.expiryDate instanceof Date) { %>
-                      <%= e.expiryDate.toISOString().split('T')[0].split('-').reverse().join('/') %>
-                    <% } else { %>
-                      <%= e.expiryDate %>
-                    <% } %>
+                    <%= e.expiryDate && e.expiryDate instanceof Date
+                          ? e.expiryDate.toISOString().split('T')[0].split('-').reverse().join('/')
+                          : e.expiryDate %>
                   </div>
                 <% }) %>
               </td>
@@ -84,14 +77,10 @@
               <td><%= tx.healthCenter?.healthCenterName %></td>
               <td><%= tx.enteredBy?.username %></td>
               <td>
-                <% if (user.position !== "Head of Pharmacy") { %>
-                  <a class="btn btn-sm btn-warning" href="/transactions/<%= tx._id %>/edit">Edit</a>
+                  <a class="btn btn-sm btn-warning mb-1" href="/transactions/<%= tx._id %>/edit">Edit</a>
                   <form method="POST" action="/transactions/<%= tx._id %>?_method=DELETE" style="display:inline;">
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                   </form>
-                <% } else { %>
-                  <span class="text-muted">View Only</span>
-                <% } %>
               </td>
             </tr>
           <% }) %>

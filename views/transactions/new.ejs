@@ -5,6 +5,25 @@
 
   <div class="card p-4">
     <form method="POST" action="/medications/<%= medicationId %>/transactions">
+      
+      <% if (user && (user.position === "Head of Pharmacy" || user.position === "Senior Pharmacy")) { %>
+        <div class="mb-3">
+          <label for="healthCenter" class="form-label">Health Center</label>
+          <select class="form-select" id="healthCenter" name="healthCenter" required>
+            <option value="">-- Choose Health Center --</option>
+            <% allowedHealthCenters.forEach(center => { %>
+              <option value="<%= center._id %>"><%= center.healthCenterName %> (<%= center.region %>)</option>
+            <% }) %>
+          </select>
+        </div>
+      <% } else { %>
+        <input type="hidden" name="healthCenter" value="<%= user.healthCenter %>">
+        <div class="mb-3">
+          <label class="form-label">Health Center</label>
+          <input type="text" class="form-control" value="<%= user.healthCenterName %>" readonly>
+        </div>
+      <% } %>
+
       <div class="mb-3">
         <label for="date" class="form-label">Date</label>
         <input type="date" class="form-control" id="date" name="date" required>

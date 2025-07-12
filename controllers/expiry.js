@@ -3,17 +3,32 @@ const MedicationTransaction = require("../models/MedicationTransaction");
 const HealthCenter = require("../models/HealthCenter");
 const XLSX = require("xlsx");
 
-router.get("/expiry-check", (req, res) => {
+router.get("/expiry-check",async (req, res) => {
+  let allowedHealthCenters = [];
+
+if (req.session.user.position === "Head of Pharmacy") {
+  allowedHealthCenters = await HealthCenter.find();
+} 
+else if (req.session.user.position === "Senior Pharmacy") {
+  const userHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
+  allowedHealthCenters = await HealthCenter.find({ region: userHealthCenter.region });
+} 
+else {
+  allowedHealthCenters = await HealthCenter.find({ _id: req.session.user.healthCenter });
+}
+
   res.render('expiry/form.ejs', {
     results: null,
     startDate: '',
     endDate: '',
+    selectedHealthCenter: '',
+    allowedHealthCenters,
     user: req.session.user
   });
 });
 
 router.post("/expiry-check", async (req, res) => {
-  const { startDate, endDate } = req.body;
+  const { startDate, endDate, healthCenter } = req.body;
 
   let healthCenterFilter = [];
   let allowedHealthCenters = [];
@@ -35,7 +50,13 @@ router.post("/expiry-check", async (req, res) => {
     'expiry.expiryDate': { $gte: new Date(startDate), $lte: new Date(endDate) }
   };
 
-  if (req.session.user.position !== "Head of Pharmacy") {
+ if (req.session.user.position === "Head of Pharmacy" && healthCenter) {
+    query.healthCenter = healthCenter;
+  } 
+  else if (req.session.user.position === "Senior Pharmacy" && healthCenter) {
+    query.healthCenter = healthCenter;
+  } 
+  else if (req.session.user.position !== "Head of Pharmacy" ) {
     query.healthCenter = { $in: healthCenterFilter };
   }
 
@@ -53,13 +74,14 @@ router.post("/expiry-check", async (req, res) => {
     results: filteredResults,
     startDate,
     endDate,
+    selectedHealthCenter: healthCenter,
     allowedHealthCenters,
     user: req.session.user
   });
 });
 
 router.post("/expiry-check/export", async (req, res) => {
-  const { startDate, endDate } = req.body;
+  const { startDate, endDate, healthCenter } = req.body;
 
   let healthCenterFilter = [];
 
@@ -79,7 +101,13 @@ router.post("/expiry-check/export", async (req, res) => {
     'expiry.expiryDate': { $gte: new Date(startDate), $lte: new Date(endDate) }
   };
 
-  if (req.session.user.position !== "Head of Pharmacy") {
+  if (req.session.user.position === "Head of Pharmacy" && healthCenter) {
+    query.healthCenter = healthCenter;
+  } 
+  else if (req.session.user.position === "Senior Pharmacy" && healthCenter) {
+    query.healthCenter = healthCenter;
+  } 
+  else if (req.session.user.position !== "Head of Pharmacy") {
     query.healthCenter = { $in: healthCenterFilter };
   }
   

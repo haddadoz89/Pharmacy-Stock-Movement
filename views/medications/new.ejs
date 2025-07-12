@@ -1,17 +1,33 @@
 <%- include('../partials/_navbar.ejs') %>
 
-<h1>Add New Medication</h1>
+<div class="container mt-5" style="max-width: 500px;">
+  <h2 class="mb-4 text-center">Add New Medication</h2>
 
-<form method="POST" action="/medications">
-  <label>Item Name</label><br>
-  <input type="text" name="itemName" required>
-  <br>
-  <br>
+  <div class="card p-4">
+    <form method="POST" action="/medications">
+      <div class="mb-3">
+        <label for="itemName" class="form-label">Item Name</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="itemName" 
+          name="itemName" 
+          placeholder="Enter item name" 
+          required>
+      </div>
 
-  <label>Code Number</label><br>
-  <input type="text" name="codeNumber" required>
-  <br>
-  <br>
-  
-  <button type="submit">Add Medication</button>
-</form>
+      <div class="mb-3">
+        <label for="codeNumber" class="form-label">Code Number</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="codeNumber" 
+          name="codeNumber" 
+          placeholder="Enter code number" 
+          required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Add Medication</button>
+    </form>
+  </div>
+</div>

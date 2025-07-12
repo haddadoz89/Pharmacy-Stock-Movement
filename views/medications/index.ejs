@@ -3,7 +3,6 @@
 <div class="container mt-5">
   <h2 class="mb-4 text-center">Medication List</h2>
 
-  <!-- Search Form -->
   <form class="d-flex mb-4" method="GET" action="/medications">
     <input 
       type="text" 
@@ -14,11 +13,11 @@
     <button class="btn btn-primary" type="submit">Search</button>
   </form>
 
-  <!-- Action Links -->
   <div class="mb-4">
     <% if (user.position === "Head of Pharmacy") { %>
       <a class="btn btn-success me-2" href="/medications/new">Add New Medication</a>
       <a class="btn btn-outline-primary" href="/medications/import">Import Medication Catalog</a>
+      <a class="btn btn-outline-secondary" href="/transactions/import">Import Transactions</a>
     <% } %>
 
     <% if (user.position !== "Head of Pharmacy") { %>
@@ -26,7 +25,6 @@
     <% } %>
   </div>
 
-  <!-- Medication List -->
   <% if (medications.length > 0) { %>
     <div class="list-group">
       <% medications.forEach(item => { %>

@@ -1,21 +1,36 @@
 const router = require("express").Router();
 const MedicationTransaction = require("../models/MedicationTransaction");
+const HealthCenter = require("../models/HealthCenter");
 
-router.get("/medications/:id/transactions/new", (req, res) => {
+router.get("/medications/:id/transactions/new", async (req, res) => {
+  const medicationId = req.params.id;
+
+  let allowedHealthCenters = [];
+  if (req.session.user.position === "Head of Pharmacy") {
+    allowedHealthCenters = await HealthCenter.find();
+  } 
+  else if (req.session.user.position === "Senior Pharmacy") {
+    const userHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
+    allowedHealthCenters = await HealthCenter.find({ region: userHealthCenter.region });
+  } 
+  else {
+    allowedHealthCenters = await HealthCenter.find({ _id: req.session.user.healthCenter });
+  }
+
   res.render("transactions/new.ejs", {
-    medicationId: req.params.id,
+    medicationId,
+    allowedHealthCenters,
     user: req.session.user
   });
 });
 
 router.post("/medications/:id/transactions", async (req, res) => {
   const medicationId = req.params.id;
-  const userHealthCenterId = req.session.user.healthCenter;
-
+  const selectedHealthCenter = req.body.healthCenter || req.session.user.healthCenter;
   const previousTransaction = await MedicationTransaction.findOne({
     codeNumber: medicationId,
-    healthCenter: userHealthCenterId
-  }).sort({ date: -1 , _id: -1});
+    healthCenter: selectedHealthCenter
+  }).sort({ date: -1 , _id: -1 });
 
   let previousBalance = 0;
   if (previousTransaction) {
@@ -38,9 +53,9 @@ router.post("/medications/:id/transactions", async (req, res) => {
       lotNumber: req.body.lotNumber
     }],
     orderNumber: req.body.orderNumber,
+    remarks: req.body.remarks,
     enteredBy: req.session.user._id,
-    healthCenter: userHealthCenterId,
-    remarks: req.body.remarks
+    healthCenter: selectedHealthCenter
   });
 
   res.redirect(`/medications/${medicationId}`);

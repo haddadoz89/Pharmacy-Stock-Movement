@@ -7,10 +7,11 @@ router.get("/medications", async (req, res) => {
   const search = req.query.search || "";
   const regex = new RegExp(search, "i");
   const medications = await MedicationCatalog.find({
-    $or:[
-    { itemName: { $regex: regex }},
-    { codeNumber:{$regex:regex}} 
-  ]});
+    $or: [
+      { itemName: { $regex: regex } },
+      { codeNumber: { $regex: regex } }
+    ]
+  });
   res.render("medications/index.ejs", { medications, search });
 });
 
@@ -49,11 +50,8 @@ router.put("/medications/:id", async (req, res) => {
 
 router.delete("/medications/:id", async (req, res) => {
   const medId = req.params.id;
-
   await MedicationTransaction.deleteMany({ codeNumber: medId });
-
   await MedicationCatalog.findByIdAndDelete(medId);
-
   res.redirect('/medications');
 });
 
@@ -83,7 +81,6 @@ router.get("/medications/:id", async (req, res) => {
   else if (req.session.user.position === "Senior Pharmacy") {
     const userHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
     allHealthCenters = await HealthCenter.find({ region: userHealthCenter.region });
-
     if (req.query.healthCenter) {
       filter.healthCenter = req.query.healthCenter;
       selectedHealthCenter = await HealthCenter.findById(req.query.healthCenter);
@@ -107,6 +104,48 @@ router.get("/medications/:id", async (req, res) => {
     selectedHealthCenter,
     user: req.session.user
   });
+});
+
+router.get("/medications/:id/adjust", async (req, res) => {
+  const medication = await MedicationCatalog.findById(req.params.id);
+
+  let allowedHealthCenters = [];
+  if (req.session.user.position === "Head of Pharmacy") {
+    allowedHealthCenters = await HealthCenter.find();
+  } 
+  else if (req.session.user.position === "Senior Pharmacy") {
+    const userHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
+    allowedHealthCenters = await HealthCenter.find({ region: userHealthCenter.region });
+  } 
+  else {
+    allowedHealthCenters = await HealthCenter.find({ _id: req.session.user.healthCenter });
+  }
+
+  res.render("medications/adjust.ejs", {
+    medication,
+    allowedHealthCenters,
+    user: req.session.user
+  });
+});
+
+router.post("/medications/:id/adjust", async (req, res) => {
+  const medicationId = req.params.id;
+  const selectedHealthCenter = req.body.healthCenter || req.session.user.healthCenter;
+
+  await MedicationTransaction.create({
+    codeNumber: medicationId,
+    date: new Date().toISOString().split('T')[0],
+    qtyIn: 0,
+    qtyOut: 0,
+    counterStock: req.body.counterStock,
+    storeBalance: req.body.storeBalance,
+    transactionType: "Adjustment",
+    reason: req.body.reason,
+    enteredBy: req.session.user._id,
+    healthCenter: selectedHealthCenter
+  });
+
+  res.redirect(`/medications/${medicationId}`);
 });
 
 module.exports = router;
