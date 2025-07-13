@@ -3,13 +3,14 @@
 
 <div class="container mt-5" style="max-width: 500px;">
   <h2 class="mb-4 text-center">Import Medication Catalog</h2>
-   <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+
+  <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-center p-4">
         <div class="spinner-border text-primary mb-3" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <h5>Please wait, uploading...</h5>
+        <h5 class="mb-0">Please wait, uploading...</h5>
       </div>
     </div>
   </div>
@@ -18,16 +19,22 @@
     <form method="POST" action="/medications/import" enctype="multipart/form-data">
       <div class="mb-3">
         <label for="file" class="form-label">Upload Excel File (.xlsx)</label>
-        <input class="form-control" type="file" id="file" name="file" accept=".xlsx" required>
+        <input 
+          class="form-control" 
+          type="file" 
+          id="file" 
+          name="file" 
+          accept=".xlsx" 
+          required>
       </div>
+
       <button type="submit" class="btn btn-primary w-100">Upload and Import</button>
     </form>
   </div>
 </div>
 
 <script>
-  const form = document.querySelector("form");
-  form.addEventListener("submit", (e) => {
+  document.querySelector("form").addEventListener("submit", () => {
     const modal = new bootstrap.Modal(document.getElementById('loadingModal'));
     modal.show();
   });

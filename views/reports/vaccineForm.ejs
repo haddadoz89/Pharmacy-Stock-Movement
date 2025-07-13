@@ -1,0 +1,72 @@
+<%- include('../partials/_navbar.ejs') %>
+
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Vaccine Monthly Summary Report</h2>
+
+  <div class="card p-4 mb-4">
+    <form method="POST" action="/vaccine-report">
+      <% if (user && (user.position === "Head of Pharmacy" || user.position === "Senior Pharmacy")) { %>
+        <div class="mb-3">
+          <label for="healthCenter" class="form-label">Health Center</label>
+          <select class="form-select" id="healthCenter" name="healthCenter">
+            <option value="">-- All Health Centers --</option>
+            <% allowedHealthCenters.forEach(center => { %>
+              <option value="<%= center._id %>" <%= selectedHealthCenter === center._id?.toString() ? 'selected' : '' %>>
+                <%= center.healthCenterName %> (<%= center.region %>)
+              </option>
+            <% }) %>
+          </select>
+        </div>
+      <% } %>
+
+      <div class="mb-3">
+        <label for="month" class="form-label">Month</label>
+        <input type="number" class="form-control" id="month" name="month" min="1" max="12" value="<%= month || '' %>" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="year" class="form-label">Year</label>
+        <input type="number" class="form-control" id="year" name="year" value="<%= year || '' %>" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Generate Report</button>
+    </form>
+  </div>
+
+  <% if (month && year) { %>
+    <h3 class="mb-3 text-center">Results for <%= month %>/<%= year %></h3>
+
+    <% if (reportData && reportData.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Code Number</th>
+              <th>Item Name</th>
+              <th>Start Balance</th>
+              <th>Qty Received</th>
+              <th>Qty Used</th>
+              <th>Last Store Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% reportData.forEach(item => { %>
+              <tr>
+                <td><%= item.codeNumber %></td>
+                <td><%= item.itemName %></td>
+                <td><%= item.startBalance !== undefined ? item.startBalance : 0 %></td>
+                <td><%= item.qtyIn || 0 %></td>
+                <td><%= item.qtyOut || 0 %></td>
+                <td><%= item.storeBalance || 0 %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="alert alert-warning mt-3">
+        No active vaccine items found for this month.
+      </div>
+    <% } %>
+  <% } %>
+</div>

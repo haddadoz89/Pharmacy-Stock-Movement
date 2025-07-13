@@ -15,6 +15,17 @@
     </div>
   </div>
 
+  <% if (failedCodes && failedCodes.length > 0) { %>
+    <div class="alert alert-warning">
+      <strong>Warning!</strong> The following Code Numbers were skipped because they are inactive or not found:
+      <ul class="mb-0">
+        <% failedCodes.forEach(code => { %>
+          <li><%= code %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
   <div class="card p-4">
     <form method="POST" action="/transactions/import" enctype="multipart/form-data">
       

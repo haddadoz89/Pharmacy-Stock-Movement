@@ -31,8 +31,10 @@ router.get("/transactions/import", async (req, res) => {
 
   res.render("transactions/import.ejs", {
     allowedHealthCenters,
-    user: req.session.user
+    user: req.session.user,
+    failedCodes: req.session.failedCodes || []
   });
+  req.session.failedCodes = null;
 });
 
 router.post("/transactions/import", upload.single("file"), async (req, res) => {
@@ -42,10 +44,16 @@ router.post("/transactions/import", upload.single("file"), async (req, res) => {
   const rows = XLSX.utils.sheet_to_json(sheet);
 
   const selectedHealthCenter = req.body.healthCenter || req.session.user.healthCenter;
+  const failedCodes = [];
 
   for (let row of rows) {
-    const medication = await MedicationCatalog.findOne({ codeNumber: row["Code Number"] });
-    if (!medication) continue;
+    const codeNumber = row["Code Number"];
+    const medication = await MedicationCatalog.findOne({ codeNumber });
+
+    if (!medication || medication.active === false) {
+      failedCodes.push(codeNumber);
+      continue;
+    }
 
     let dateValue = row["Date"];
     let dateParsed = "";
@@ -94,7 +102,8 @@ router.post("/transactions/import", upload.single("file"), async (req, res) => {
     });
   }
 
-  res.redirect(`/medications`);
+  req.session.failedCodes = failedCodes;
+  res.redirect(`/transactions/import`);
 });
 
 module.exports = router;

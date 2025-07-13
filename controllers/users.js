@@ -12,23 +12,36 @@ const isHead = (req, res, next) => {
 
 router.get("/", isHead, async (req, res) => {
   const search = req.query.search || "";
-const role = req.query.role || "";
+  const role = req.query.role || "";
 
-let query = {};
+  let query = {};
 
-if (search) {
-  query.username = { $regex: search, $options: "i" };
-}
+  if (search) {
+    query.username = { $regex: search, $options: "i" };
+  }
 
-if (role) {
-  query.position = role;
-}
+  if (role) {
+    query.position = role;
+  }
 
-const users = await User.find(query).populate("healthCenter");
+  let users = await User.find(query).populate("healthCenter");
 
-res.render("users/index.ejs", { users, search, role });
+
+  const roleOrder = [
+    "Head of Pharmacy",
+    "Senior Pharmacy",
+    "Pharmacist Incharge",
+    "Senior Pharmacy Technician",
+    "Pharmacist",
+    "Pharmacy Technician"
+  ];
+
+  users.sort((a, b) => {
+    return roleOrder.indexOf(a.position) - roleOrder.indexOf(b.position);
+  });
+
+  res.render("users/index.ejs", { users, search, role });
 });
-
 
 router.get("/new", isHead, async (req, res) => {
   const healthCenters = await HealthCenter.find();

@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const MedicationTransaction = require("../models/MedicationTransaction");
+const MedicationCatalog = require("../models/MedicationCatalog");
 const HealthCenter = require("../models/HealthCenter");
 
 router.get("/medications/:id/transactions/new", async (req, res) => {
@@ -27,6 +28,14 @@ router.get("/medications/:id/transactions/new", async (req, res) => {
 router.post("/medications/:id/transactions", async (req, res) => {
   const medicationId = req.params.id;
   const selectedHealthCenter = req.body.healthCenter || req.session.user.healthCenter;
+
+  // Check if medication is active
+  const medication = await MedicationCatalog.findById(medicationId);
+  if (!medication || medication.status === "inactive") {
+    req.session.formError = "This medication is deactivated and cannot receive new transactions.";
+    return res.redirect(`/medications/${medicationId}`);
+  }
+
   const previousTransaction = await MedicationTransaction.findOne({
     codeNumber: medicationId,
     healthCenter: selectedHealthCenter

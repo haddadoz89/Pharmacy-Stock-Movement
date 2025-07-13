@@ -1,7 +1,7 @@
 <%- include('../partials/_navbar.ejs') %>
 
 <div class="container mt-5">
-  <h2 class="mb-4 text-center">Transaction Reports</h2>
+  <h2 class="mb-4 text-center">Transaction Summary Report</h2>
 
   <div class="card p-4 mb-4">
     <form method="POST" action="/reports">
@@ -9,6 +9,7 @@
         <label for="startDate" class="form-label">Start Date</label>
         <input type="date" class="form-control" name="startDate" id="startDate" value="<%= startDate || '' %>" required>
       </div>
+
       <div class="mb-3">
         <label for="endDate" class="form-label">End Date</label>
         <input type="date" class="form-control" name="endDate" id="endDate" value="<%= endDate || '' %>" required>
@@ -28,7 +29,7 @@
         </div>
       <% } %>
 
-      <button type="submit" class="btn btn-primary w-100">Search</button>
+      <button type="submit" class="btn btn-primary w-100">Generate Report</button>
     </form>
   </div>
 
@@ -40,7 +41,7 @@
         <% if (selectedHealthCenter) { %>
           <input type="hidden" name="healthCenter" value="<%= selectedHealthCenter %>">
         <% } %>
-        <button type="submit" class="btn btn-success w-100">Export to Excel</button>
+        <button type="submit" class="btn btn-success w-100">Export Summary to Excel</button>
       </form>
     </div>
 
@@ -48,35 +49,21 @@
       <table class="table table-striped table-bordered">
         <thead class="table-light">
           <tr>
-            <th>Date</th>
             <th>Code Number</th>
             <th>Item Name</th>
-            <th>Qty In</th>
-            <th>Qty Out</th>
-            <th>Counter Stock</th>
-            <th>Store Balance</th>
-            <th>Order Number</th>
-            <th>Remarks</th>
-            <th>Health Center</th>
-            <th>Entered By</th>
+            <th>Total Qty In</th>
+            <th>Total Qty Out</th>
+            <th>Last Store Balance</th>
           </tr>
         </thead>
         <tbody>
-          <% results.forEach(tx => { %>
-            <tr>
-              <td>
-                <%= tx.date instanceof Date ? tx.date.toISOString().slice(0, 10) : tx.date %>
-              </td>
-              <td><%= tx.codeNumber.codeNumber %></td>
-              <td><%= tx.codeNumber.itemName %></td>
-              <td><%= tx.qtyIn %></td>
-              <td><%= tx.qtyOut %></td>
-              <td><%= tx.counterStock %></td>
-              <td><%= tx.storeBalance %></td>
-              <td><%= tx.orderNumber %></td>
-              <td><%= tx.remarks %></td>
-              <td><%= tx.healthCenter ? tx.healthCenter.healthCenterName : '' %></td>
-              <td><%= tx.enteredBy ? tx.enteredBy.username : '' %></td>
+          <% results.forEach(item => { %>
+            <tr class="<%= item.active === false ? 'table-secondary text-muted' : '' %>">
+              <td><%= item.codeNumber %></td>
+              <td><%= item.itemName %></td>
+              <td><%= item.qtyIn %></td>
+              <td><%= item.qtyOut %></td>
+              <td><%= item.lastStoreBalance %></td>
             </tr>
           <% }) %>
         </tbody>

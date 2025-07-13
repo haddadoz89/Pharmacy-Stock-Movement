@@ -2,11 +2,24 @@
 
 <nav class="navbar navbar-expand-lg" style="background-color: #002b5c;">
   <div class="container">
+    <!-- LEFT: Brand -->
     <a class="navbar-brand text-white fw-bold" href="/">Pharmacy Stock Movement</a>
 
-    <div class="collapse navbar-collapse justify-content-end">
+    <!-- MIDDLE: User Info -->
+    <% if (user) { %>
+      <span class="text-white small mx-auto">
+        Logged in as <strong><%= user.username %></strong>
+        (<%= user.position %>)
+        <% if (user.healthCenter) { %>
+          - <%= user.healthCenter.healthCenterName %>
+        <% } %>
+      </span>
+    <% } %>
+
+    <!-- RIGHT: Links -->
+    <div>
       <% if (user) { %>
-        <ul class="navbar-nav align-items-center gap-2">
+        <ul class="navbar-nav flex-row gap-2 align-items-center">
           <li class="nav-item">
             <a class="nav-link text-white" href="/medications">Medications</a>
           </li>
@@ -16,20 +29,14 @@
           <li class="nav-item">
             <a class="nav-link text-white" href="/reports">Reports</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/vaccine-report">Vaccine Report</a>
+          </li>
           <% if (user.position === "Head of Pharmacy") { %>
             <li class="nav-item">
               <a class="nav-link text-white" href="/users">User Management</a>
             </li>
           <% } %>
-          <li class="nav-item">
-            <span class="navbar-text text-white small">
-              Logged in as <strong><%= user.username %></strong>
-              (<%= user.position %>)
-              <% if (user.healthCenter) { %>
-                - <%= user.healthCenter.healthCenterName %>
-              <% } %>
-            </span>
-          </li>
           <li class="nav-item">
             <a class="btn btn-outline-light btn-sm" href="/auth/logout">Logout</a>
           </li>

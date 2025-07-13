@@ -53,7 +53,11 @@
         <tbody>
           <% transactions.forEach(tx => { %>
             <tr>
-              <td><%= tx.date %></td>
+              <td>
+                <%= tx.date && tx.date instanceof Date
+                ? tx.date.toISOString().split('T')[0].split('-').reverse().join('/')
+                : tx.date %>
+              </td>
               <td><%= tx.qtyIn %></td>
               <td><%= tx.qtyOut %></td>
               <td><%= tx.counterStock %></td>
