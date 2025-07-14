@@ -31,6 +31,21 @@
     <a class="btn btn-success" href="/medications/<%= medication._id %>/transactions/new">Add New Transaction</a>
   </div>
 
+  <div class="d-flex justify-content-between mb-3">
+  <% if (previousMed) { %>
+    <a class="btn btn-outline-primary" href="/medications/<%= previousMed._id %>">
+      &laquo; <strong>Back</strong>  (<%= previousMed.codeNumber %>)
+    </a>
+  <% } else { %>
+    <span></span>
+  <% } %>
+  <% if (nextMed) { %>
+    <a class="btn btn-outline-primary" href="/medications/<%= nextMed._id %>">
+     <strong>Next</strong>(<%= nextMed.codeNumber %>) &raquo;
+    </a>
+  <% } %>
+</div>
+
   <% if (transactions.length > 0) { %>
     <div class="table-responsive">
       <table class="table table-striped table-bordered align-middle">

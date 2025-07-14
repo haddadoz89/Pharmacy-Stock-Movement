@@ -43,6 +43,17 @@
           <small class="text-muted">Head of Pharmacy does not need a specific health center.</small>
         <% } %>
       </div>
+      <div class="mb-3">
+        <label class="form-label">New Password (leave blank to keep current)</label>
+        <input type="password" class="form-control" name="password">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Active</label>
+        <select class="form-select" name="active">
+          <option value="true" <%= user.active ? 'selected' : '' %>>Active</option>
+          <option value="false" <%= !user.active ? 'selected' : '' %>>Inactive</option>
+        </select>
+      </div>
 
       <button type="submit" class="btn btn-primary w-100">Update User</button>
     </form>

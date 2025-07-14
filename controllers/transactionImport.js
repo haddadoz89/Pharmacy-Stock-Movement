@@ -17,15 +17,12 @@ function formatDateToDDMMYYYY(date) {
 
 router.get("/transactions/import", async (req, res) => {
   let allowedHealthCenters = [];
-
   if (req.session.user.position === "Head of Pharmacy") {
     allowedHealthCenters = await HealthCenter.find();
-  } 
-  else if (req.session.user.position === "Senior Pharmacy") {
+  } else if (req.session.user.position === "Senior Pharmacy") {
     const userHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
     allowedHealthCenters = await HealthCenter.find({ region: userHealthCenter.region });
-  } 
-  else {
+  } else {
     allowedHealthCenters = await HealthCenter.find({ _id: req.session.user.healthCenter });
   }
 
@@ -50,28 +47,16 @@ router.post("/transactions/import", upload.single("file"), async (req, res) => {
     const codeNumber = row["Code Number"];
     const medication = await MedicationCatalog.findOne({ codeNumber });
 
-    if (!medication || medication.active === false) {
+    if (!medication || !medication.isActive) {
       failedCodes.push(codeNumber);
       continue;
     }
 
-    let dateValue = row["Date"];
-    let dateParsed = "";
-    if (!isNaN(dateValue) && typeof dateValue === "number") {
-      const parsed = XLSX.SSF.parse_date_code(dateValue);
-      dateParsed = formatDateToDDMMYYYY(new Date(parsed.y, parsed.m - 1, parsed.d));
-    } else {
-      dateParsed = formatDateToDDMMYYYY(new Date(dateValue));
-    }
+    let dateParsed = new Date(row["Date"]);
+    if (isNaN(dateParsed)) dateParsed = new Date(); // Default to current date if invalid
 
-    let expiryDateValue = row["Expiry Date"];
-    let expiryDateParsed = "";
-    if (!isNaN(expiryDateValue) && typeof expiryDateValue === "number") {
-      const parsed = XLSX.SSF.parse_date_code(expiryDateValue);
-      expiryDateParsed = formatDateToDDMMYYYY(new Date(parsed.y, parsed.m - 1, parsed.d));
-    } else {
-      expiryDateParsed = formatDateToDDMMYYYY(new Date(expiryDateValue));
-    }
+    let expiryDateParsed = row["Expiry Date"] ? new Date(row["Expiry Date"]) : null;
+    if (isNaN(expiryDateParsed)) expiryDateParsed = null;
 
     const qtyIn = Number(row["Qty In"]) || 0;
     const qtyOut = Number(row["Qty Out"]) || 0;
@@ -89,14 +74,14 @@ router.post("/transactions/import", upload.single("file"), async (req, res) => {
       date: dateParsed,
       qtyIn,
       qtyOut,
-      counterStock: row["Counter Stock"],
+      counterStock: row["Counter Stock"] || 0,
       storeBalance: newBalance,
-      expiry: [{
+      expiry: expiryDateParsed ? [{
         expiryDate: expiryDateParsed,
         lotNumber: row["Lot Number"]
-      }],
-      orderNumber: row["Order Number"],
-      remarks: row["Remarks"],
+      }] : [],
+      orderNumber: row["Order Number"] || "",
+      remarks: row["Remarks"] || "",
       enteredBy: req.session.user._id,
       healthCenter: selectedHealthCenter
     });

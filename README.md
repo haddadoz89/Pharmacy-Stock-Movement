@@ -1,6 +1,6 @@
 # 💊 Pharmacy Stock Movement
 
-A Node.js / Express / MongoDB app to manage pharmacy inventory and stock transactions with role-based access, import/export functionality, and reporting.
+A Node.js / Express / MongoDB app for managing pharmacy inventory, stock transactions, expiry tracking, role-based access control, import/export, user management, and detailed reporting.
 
 ---
 
@@ -8,23 +8,21 @@ A Node.js / Express / MongoDB app to manage pharmacy inventory and stock transac
 
 Pharmacy Stock Movement is designed for the Ministry of Health to:
 
-Track medication catalog entries
+- Maintain a centralized medication catalog with active/inactive control
 
-Record stock transactions per health center
+- Record stock transactions for each health center
 
-Automatically maintain store balances
+- Automatically calculate store balances
 
-View stock movement history
+- Filter and search expiry dates with health center controls
 
-Search and export expiry dates
+- Support Excel-based import and export of catalog and transactions
 
-Manage users with roles and health center assignments
+- Provide detailed transaction and vaccine monthly reports
 
-Generate Excel reports
+- Enable strict role-based access control
 
-Import and export data via Excel
-
-Enforce strict role-based access
+- Allow user management by Head of Pharmacy
 
 ---
 
