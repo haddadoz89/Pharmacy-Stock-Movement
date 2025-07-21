@@ -17,10 +17,10 @@
           </select>
         </div>
       <% } else { %>
-        <input type="hidden" name="healthCenter" value="<%= user.healthCenter %>">
+        <input type="hidden" name="healthCenter" value="<%= healthCenterId %>">
         <div class="mb-3">
           <label class="form-label">Health Center</label>
-          <input type="text" class="form-control" value="<%= user.healthCenterName %>" readonly>
+          <input type="text" class="form-control" value="<%= healthCenterName %>" readonly>
         </div>
       <% } %>
 
