@@ -4,14 +4,18 @@
 <div class="container mt-5">
   <h2 class="mb-4 text-center">Medication List</h2>
 
-  <form class="d-flex mb-2" method="GET" action="/medications">
+  <!-- Search with autocomplete -->
+  <form class="d-flex mb-2 position-relative" method="GET" action="/medications" autocomplete="off">
     <input 
       type="text" 
       class="form-control me-2" 
+      id="searchBox"
       name="search" 
       value="<%= search %>" 
       placeholder="Search...">
     <button class="btn btn-primary" type="submit">Search</button>
+    <!-- Autocomplete list -->
+    <ul id="autocompleteList" class="list-group position-absolute w-100" style="z-index:10; top:100%; left:0;"></ul>
   </form>
 
   <% if (user.position === "Head of Pharmacy") { %>
@@ -34,13 +38,12 @@
       <a class="btn btn-outline-primary me-2" href="/medications/import">Import Medication Catalog</a>
       <a class="btn btn-outline-secondary" href="/transactions/import">Import Transactions</a>
     <% } %>
-
     <% if (user.position !== "Head of Pharmacy") { %>
       <a class="btn btn-outline-secondary" href="/transactions/import">Import Transactions</a>
     <% } %>
   </div>
 
-<% if (groupKeys.length > 0) { %>
+  <% if (groupKeys.length > 0) { %>
     <div class="accordion" id="medicationAccordion">
       <% groupKeys.forEach((group, idx) => { 
         const collapseId = `collapse${idx}`;
@@ -94,18 +97,59 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".expand-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        const section = document.getElementById(btn.getAttribute("data-expandable"));
-        if (section.style.display === "none") {
-          section.style.display = "";
-          btn.innerHTML = "▼ " + btn.innerText.slice(2); // Change arrow
-        } else {
-          section.style.display = "none";
-          btn.innerHTML = "▶ " + btn.innerText.slice(2);
-        }
-      });
-    });
+const searchInput = document.getElementById('searchBox');
+const list = document.getElementById('autocompleteList');
+let currentFocus = -1;
+
+searchInput.addEventListener('input', async function() {
+  const q = this.value.trim();
+  list.innerHTML = '';
+  if (q.length < 2) return;
+  const res = await fetch(`/medications/autocomplete?q=${encodeURIComponent(q)}`);
+  const meds = await res.json();
+  meds.forEach((m, idx) => {
+    const li = document.createElement('li');
+    li.className = "list-group-item list-group-item-action";
+    li.innerHTML = `<strong>${m.codeNumber}</strong> - ${m.itemName}`;
+    li.onclick = () => {
+      searchInput.value = m.codeNumber;
+      list.innerHTML = '';
+      // Optionally, submit form automatically:
+      // searchInput.form.submit();
+    };
+    list.appendChild(li);
   });
+});
+
+document.addEventListener('click', (e) => {
+  if (!list.contains(e.target) && e.target !== searchInput) {
+    list.innerHTML = '';
+  }
+});
+
+// Optional: Keyboard navigation
+searchInput.addEventListener('keydown', function(e) {
+  let items = list.getElementsByTagName("li");
+  if (!items.length) return;
+  if (e.key === "ArrowDown") {
+    currentFocus++;
+    if (currentFocus >= items.length) currentFocus = 0;
+    setActive(items, currentFocus);
+    e.preventDefault();
+  } else if (e.key === "ArrowUp") {
+    currentFocus--;
+    if (currentFocus < 0) currentFocus = items.length - 1;
+    setActive(items, currentFocus);
+    e.preventDefault();
+  } else if (e.key === "Enter") {
+    if (currentFocus > -1 && items[currentFocus]) {
+      items[currentFocus].click();
+      e.preventDefault();
+    }
+  }
+});
+function setActive(items, idx) {
+  for (let i = 0; i < items.length; i++) items[i].classList.remove("active");
+  if (idx >= 0 && items[idx]) items[idx].classList.add("active");
+}
 </script>

@@ -6,7 +6,10 @@ const HealthCenter = require("../models/HealthCenter");
 // New transaction form
 router.get("/medications/:id/transactions/new", async (req, res) => {
   const medicationId = req.params.id;
+
   let allowedHealthCenters = [];
+  let healthCenterId = null;
+  let healthCenterName = "";
 
   if (req.session.user.position === "Head of Pharmacy") {
     allowedHealthCenters = await HealthCenter.find();
@@ -14,13 +17,19 @@ router.get("/medications/:id/transactions/new", async (req, res) => {
     const userHealthCenter = await HealthCenter.findById(req.session.user.healthCenter);
     allowedHealthCenters = await HealthCenter.find({ region: userHealthCenter.region });
   } else {
-    allowedHealthCenters = await HealthCenter.find({ _id: req.session.user.healthCenter });
+    // For normal user: get health center info
+    const hc = await HealthCenter.findById(req.session.user.healthCenter);
+    healthCenterId = hc ? hc._id : "";
+    healthCenterName = hc ? hc.healthCenterName : "";
+    allowedHealthCenters = [hc];
   }
 
   res.render("transactions/new.ejs", {
     medicationId,
     allowedHealthCenters,
-    user: req.session.user
+    user: req.session.user,
+    healthCenterId,
+    healthCenterName
   });
 });
 
@@ -90,7 +99,6 @@ router.put("/transactions/:id", async (req, res) => {
   if (typeof req.body.qtyIn !== "undefined" && typeof req.body.qtyOut !== "undefined") {
     const qtyIn = parseInt(req.body.qtyIn) || 0;
     const qtyOut = parseInt(req.body.qtyOut) || 0;
-    // Optional: update balance if desired
     storeBalance = qtyIn - qtyOut;
   }
 

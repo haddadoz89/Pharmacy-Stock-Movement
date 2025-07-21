@@ -2,7 +2,25 @@ const router = require("express").Router();
 const MedicationCatalog = require("../models/MedicationCatalog");
 const MedicationTransaction = require("../models/MedicationTransaction");
 const HealthCenter = require("../models/HealthCenter");
-
+router.get("medications/autocomplete",async(req,res)=>{
+  const search = req.query.search || "";
+  if (!search) return res.json([])
+  const regex = new RegExp(search, "i");
+  const meds = await MedicationCatalog.find({
+    isActive: true,
+    $or: [
+      { itemName: { $regex: regex } },
+      { codeNumber: { $regex: regex } }
+    ]
+  })
+    .limit(10)
+    .sort({ codeNumber: 1 });
+  res.json(meds.map(m => ({
+    _id: m._id,
+    codeNumber: m.codeNumber,
+    itemName: m.itemName
+  })));
+});
 router.get("/medications", async (req, res) => {
   const search = req.query.search || "";
   const status = req.query.status || "all";
